@@ -1,0 +1,22 @@
+{
+  "name": "parkingspotter",
+  "version": "1.0.0",
+  "description": "Laboratory of Advanced Programming Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sk4rKr0w/ParkingSpotter.git"
+  },
+  "author": "lor54, Sk4rKr0w",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sk4rKr0w/ParkingSpotter/issues"
+  },
+  "homepage": "https://github.com/Sk4rKr0w/ParkingSpotter#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
