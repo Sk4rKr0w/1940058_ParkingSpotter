@@ -1,2 +1,3 @@
 # ParkingSpotter
- Laboratory of Advanced Programming PROJECT
+
+Laboratory of Advanced Programming PROJECT
