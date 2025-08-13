@@ -6,6 +6,7 @@ const cors = require('cors');
 const { sequelize } = require('./models');
 const authRoutes = require('./routes/auth');
 const protectedRoutes = require('./routes/protected');
+const reservationsRoutes = require('./routes/reservations');
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);
 app.use('/me', protectedRoutes);
+app.use('/reservations', reservationsRoutes);
 
 const PORT = process.env.PORT || 4001;
 

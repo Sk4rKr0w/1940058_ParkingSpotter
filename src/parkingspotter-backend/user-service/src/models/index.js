@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 const UserModel = require('./user');
+const ReservationModel = require('./reservation');
 
 const {
   DATABASE_HOST,
@@ -17,8 +18,13 @@ const sequelize = new Sequelize(
 );
 
 const User = UserModel(sequelize);
+const Reservation = ReservationModel(sequelize);
+
+User.hasMany(Reservation, { foreignKey: 'userId' });
+Reservation.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = {
   sequelize,
-  User
+  User,
+  Reservation
 };
