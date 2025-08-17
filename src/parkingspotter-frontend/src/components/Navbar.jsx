@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom"; // <-- import NavLink
 import parkingSpotterLogo from "/parkingSpotterLogo.png";
 import Sidebar from "./Sidebar";
 
@@ -11,56 +12,68 @@ const Navbar = () => {
 
     return (
         <div className="bg-[#121212] border-b-2 border-b-[#383838] text-white w-screen h-28 flex flex-row justify-between items-center gap-2">
-            <a href="#" className="ml-10 md:ml-20 group relative w-28 h-28">
+            <NavLink to="/" className="ml-10 md:ml-20 group relative w-28 h-28">
                 <div className="absolute inset-0 scale-85 rounded-full bg-white opacity-0 blur-xl transition duration-500 group-hover:opacity-15 z-0"></div>
                 <img
                     className="w-28 h-28 object-contain relative z-10 transition duration-500 group-hover:brightness-110"
                     src={parkingSpotterLogo}
                     alt="ParkingSpotter logo"
                 />
-            </a>
+            </NavLink>
 
             <ul className="hidden md:flex flex-row gap-x-10">
                 <li>
-                    <a
-                        href="#"
-                        className="px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition"
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            `px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition ${
+                                isActive ? "border-b-yellow-500" : ""
+                            }`
+                        }
                     >
                         Home
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a
-                        href="#"
-                        className="px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition"
+                    <NavLink
+                        to="/about"
+                        className={({ isActive }) =>
+                            `px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition ${
+                                isActive ? "border-b-yellow-500" : ""
+                            }`
+                        }
                     >
                         About
-                    </a>
+                    </NavLink>
                 </li>
                 <li>
-                    <a
-                        href="#"
-                        className="px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition"
+                    <NavLink
+                        to="/contact"
+                        className={({ isActive }) =>
+                            `px-2 py-1 border-2 border-transparent rounded hover:border-b-2 hover:border-b-yellow-500 transition ${
+                                isActive ? "border-b-yellow-500" : ""
+                            }`
+                        }
                     >
                         Contact Us
-                    </a>
+                    </NavLink>
                 </li>
             </ul>
 
             <div className="flex flex-row justify-center items-center">
                 <div className="hidden md:flex flex-row gap-x-2 mr-20">
-                    <a
-                        href="/login"
+                    <NavLink
+                        to="/login"
                         className="text-white font-medium px-6 py-2 bg-orange-600 rounded hover:bg-[#2c2c2c] hover:text-white transition"
                     >
                         Login
-                    </a>
-                    <a
-                        href="/signup"
+                    </NavLink>
+                    <NavLink
+                        to="/signup"
                         className="text-black font-medium px-6 py-2 bg-white rounded hover:bg-[#2c2c2c] hover:text-white transition"
                     >
                         Sign Up
-                    </a>
+                    </NavLink>
                 </div>
 
                 <div
