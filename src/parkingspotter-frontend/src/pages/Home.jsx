@@ -73,7 +73,7 @@ const Home = () => {
             </div>
 
             {/* Info Section */}
-            <div className="w-full  flex flex-col justify-center items-center">
+            <div className="w-full flex flex-col justify-center items-center">
                 <div className="w-full md:w-[75%]">
                     <Info isReverted={false} />
                     <Info isReverted={true} />
