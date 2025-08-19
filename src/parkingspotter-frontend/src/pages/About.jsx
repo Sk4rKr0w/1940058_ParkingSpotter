@@ -1,0 +1,121 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import PartnersSlider from "../components/PartnersSlider";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const About = () => {
+    const imgRef = useRef(null);
+    const textRef = useRef(null);
+
+    useEffect(() => {
+        if (imgRef.current) {
+            gsap.fromTo(
+                imgRef.current,
+                { opacity: 0, x: 100 },
+                {
+                    opacity: 1,
+                    x: 0,
+                    duration: 1.5,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: imgRef.current,
+                        start: "top 90%",
+                    },
+                }
+            );
+        }
+
+        if (textRef.current) {
+            gsap.fromTo(
+                textRef.current,
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    delay: 0.5,
+                    duration: 1.2,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: textRef.current,
+                        start: "top 85%",
+                    },
+                }
+            );
+        }
+    }, []);
+
+    return (
+        <section className="relative min-h-screen bg-gradient-to-b from-gray-50 to-gray-500 flex flex-col gap-2 items-center justify-center px-6 py-16">
+            <div className="max-w-5xl  mx-auto grid md:grid-cols-2 gap-12 items-center">
+                <div
+                    ref={textRef}
+                    className="text-center md:text-left space-y-6"
+                >
+                    <h2 className="text-4xl font-bold text-gray-800">
+                        Who are we?
+                    </h2>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                        <span className="font-semibold">ParkingSpotter</span> is
+                        the platform designed to make drivers' lives easier.
+                        Thanks to our technology, you can search for available
+                        parking spots in real time in the area you’re interested
+                        in and, if you wish, reserve your spot in advance.
+                    </p>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                        Say goodbye to parking stress: with ParkingSpotter you
+                        get up-to-date data, no more aimless driving around, and
+                        more time for yourself.
+                    </p>
+                </div>
+
+                <div className="flex justify-center">
+                    <img
+                        ref={imgRef}
+                        src="about_bg.jpg"
+                        alt="Trova parcheggi facilmente"
+                        className="rounded-2xl shadow-2xl w-full max-w-md"
+                    />
+                </div>
+            </div>
+
+            <hr className="w-[90%] my-10" />
+
+            <div className="max-w-5xl mx-auto text-center space-y-10 px-6">
+                <p className="text-lg text-gray-600 leading-relaxed">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Necessitatibus aliquid temporibus soluta illum totam nihil,
+                    quae exercitationem delectus corporis? Illum voluptates
+                    architecto, rem iure placeat adipisci odio optio corporis
+                    dignissimos veritatis dolor nisi libero distinctio quaerat,
+                    debitis natus quia minus. Optio ut illo mollitia maiores in
+                    iste eius quia corrupti.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <img
+                        src="about_bg.jpg"
+                        alt="Logo"
+                        className="rounded-2xl shadow-lg object-cover w-full h-64"
+                    />
+                    <img
+                        src="about_bg.jpg"
+                        alt="Logo"
+                        className="rounded-2xl shadow-lg object-cover w-full h-64"
+                    />
+                </div>
+            </div>
+
+            <hr className="w-[90%] my-10" />
+
+            <div>
+                <PartnersSlider />
+            </div>
+        </section>
+    );
+};
+
+export default About;
