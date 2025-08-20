@@ -13,7 +13,7 @@ const Login = () => {
 
         try {
             // Qui vai a fare la chiamata al tuo backend
-            const response = await fetch("https://tuo-backend.com/api/login", {
+            const response = await fetch("http://localhost:4001/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -22,6 +22,7 @@ const Login = () => {
             });
 
             const data = await response.json();
+            print(data)
 
             if (!response.ok) {
                 setError(data.message || "Errore di login");
