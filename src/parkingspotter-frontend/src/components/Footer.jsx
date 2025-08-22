@@ -1,6 +1,6 @@
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-gray-300 py-6">
+        <footer className="bg-gray-900 text-gray-300 py-6 border-t border-gray-700">
             <div className="mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="text-lg font-semibold text-white">
                     <img
@@ -23,7 +23,7 @@ const Footer = () => {
                 </div>
 
                 <div className="text-sm text-gray-500">
-                    © {new Date().getFullYear()} PrivaTerms. All rights
+                    © {new Date().getFullYear()} ParkingSpotter. All rights
                     reserved.
                 </div>
             </div>
