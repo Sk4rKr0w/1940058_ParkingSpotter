@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom"; // <-- import NavLink
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -6,8 +7,10 @@ const Signup = () => {
         email: "",
         password: "",
         confirmPassword: "",
-        role: "driver"
+        role: "driver",
     });
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,20 +18,23 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Qui puoi fare la chiamata al backend per registrare l'utente
-        console.log("Registrazione dati:", formData);
+        setLoading(true);
+        setError("");
+
         try {
-            // Qui vai a fare la chiamata al tuo backend
-            const response = await fetch("http://localhost:4001/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await fetch(
+                "http://localhost:4001/auth/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
 
             const data = await response.json();
-            print(data)
+            console.log(data);
 
             if (!response.ok) {
                 setError(data.message || "Errore di registrazione");
@@ -38,53 +44,101 @@ const Signup = () => {
         } catch (err) {
             setError("Errore di connessione al server");
         }
+
+        setLoading(false);
     };
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Nome:</label>
+        <div className="flex justify-center items-center min-h-screen bg-gray-900">
+            <form
+                onSubmit={handleSubmit}
+                className="bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-md mx-2"
+            >
+                <h2 className="text-3xl font-bold text-orange-500 mb-6 text-center">
+                    Sign Up
+                </h2>
+
+                {error && (
+                    <p className="text-red-500 text-sm mb-4 text-center">
+                        {error}
+                    </p>
+                )}
+
+                {/* Nome */}
+                <div className="mb-4">
                     <input
                         type="text"
                         name="name"
+                        placeholder="Name"
                         value={formData.name}
                         onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                 </div>
 
-                <div>
-                    <label>Email:</label>
+                {/* Email */}
+                <div className="mb-4">
                     <input
                         type="email"
                         name="email"
+                        placeholder="Email"
                         value={formData.email}
                         onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                 </div>
 
-                <div>
-                    <label>Password:</label>
+                {/* Password */}
+                <div className="mb-4">
                     <input
                         type="password"
                         name="password"
+                        placeholder="Password"
                         value={formData.password}
                         onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                 </div>
 
-                <div>
-                    <label>Conferma Password:</label>
+                {/* Conferma Password */}
+                <div className="mb-6">
                     <input
                         type="password"
                         name="confirmPassword"
+                        placeholder="Confirm Password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                 </div>
 
-                <button type="submit">Registrati</button>
+                {/* Bottone */}
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className={`w-full py-3 rounded-lg font-semibold text-white transition duration-300 ${
+                        loading
+                            ? "bg-orange-400 cursor-not-allowed"
+                            : "bg-orange-600 hover:bg-orange-700"
+                    }`}
+                >
+                    {loading ? "Loading..." : "Sign Up"}
+                </button>
+                <span className="text-gray-400 text-sm mt-4 block text-center">
+                    Do you already have an account?{" "}
+                    <NavLink
+                        to="/login"
+                        className={
+                            "text-orange-500 hover:text-orange-400 transition"
+                        }
+                    >
+                        Try to login
+                    </NavLink>
+                </span>
             </form>
         </div>
     );
