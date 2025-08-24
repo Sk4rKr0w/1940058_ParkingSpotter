@@ -1,15 +1,36 @@
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+
 const Contact = () => {
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            gsap.fromTo(
+                containerRef.current,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+            );
+        }
+    }, []);
+
     return (
-        <div className="relative flex justify-center items-center min-h-screen bg-black/50 overflow-hidden">
-            <div className="relative z-10 w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 my-5 mx-2">
-                <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+        <div className="relative flex justify-center min-h-screen items-start bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+            <div className="absolute inset-0 bg-[url('/bg-pattern.svg')] opacity-10"></div>
+
+            <div
+                ref={containerRef}
+                className="relative z-10 w-full md:w-[75%] bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl my-10 p-5 md:p-10 border border-white/20"
+            >
+                <h2 className="text-3xl font-extrabold mb-8 text-center text-white">
                     Contact Us
                 </h2>
-                <form className="space-y-4">
-                    {/* Nome */}
-                    <div>
+
+                <form className="flex flex-col md:grid md:grid-cols-2 md:gap-x-10 space-y-6">
+                    {/* Name */}
+                    <div className="flex flex-col gap-y-2">
                         <label
-                            className="block text-gray-700 font-medium mb-2"
+                            className="block text-white/80 font-medium mb-2"
                             htmlFor="name"
                         >
                             Name
@@ -19,15 +40,14 @@ const Contact = () => {
                             id="name"
                             name="name"
                             placeholder="Your name"
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
                         />
-                    </div>
 
-                    {/* Email */}
-                    <div>
+                        {/* Email */}
+
                         <label
-                            className="block text-gray-700 font-medium mb-2"
+                            className="block text-white/80 font-medium mb-2"
                             htmlFor="email"
                         >
                             Email
@@ -37,15 +57,15 @@ const Contact = () => {
                             id="email"
                             name="email"
                             placeholder="your@email.com"
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
                         />
                     </div>
 
-                    {/* Messaggio */}
-                    <div>
+                    {/* Message */}
+                    <div className="md:row-span-2">
                         <label
-                            className="block text-gray-700 font-medium mb-2"
+                            className="block text-white/80 font-medium mb-2"
                             htmlFor="message"
                         >
                             Message
@@ -55,15 +75,15 @@ const Contact = () => {
                             name="message"
                             rows={5}
                             placeholder="Your message..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
                         ></textarea>
                     </div>
 
-                    {/* Bottone */}
+                    {/* Button */}
                     <button
                         type="submit"
-                        className="cursor-pointer w-full bg-orange-600 text-white font-semibold py-3 rounded-lg hover:bg-orange-700 transition duration-300"
+                        className="md:col-span-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                         Send Message
                     </button>
