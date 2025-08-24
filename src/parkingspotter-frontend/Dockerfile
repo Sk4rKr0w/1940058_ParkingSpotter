@@ -1,14 +1,19 @@
-FROM node:22
+# Dockerfile per frontend
+FROM node:20
 
 WORKDIR /app
 
+# Copia package.json e package-lock.json / yarn.lock
 COPY package*.json ./
-RUN npm ci --only=production
 
-# copy source code
+# Installa tutte le dipendenze
+RUN npm install
+
+# Copia tutto il progetto
 COPY . .
 
-ENV NODE_ENV=production
+# Espone la porta del frontend
 EXPOSE 5173
 
-CMD ["node", "src/index.js"]
+# Comando di avvio
+CMD ["npm", "run", "dev", "--", "--host"]

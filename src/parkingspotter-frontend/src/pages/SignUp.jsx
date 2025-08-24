@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom"; // <-- import NavLink
+import { NavLink, useNavigate } from "react-router-dom"; // <-- import NavLink
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -11,6 +11,7 @@ const Signup = () => {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,6 +41,7 @@ const Signup = () => {
                 setError(data.message || "Errore di registrazione");
             } else {
                 console.log("Registrazione effettuata con successo!", data);
+                navigate("/login");
             }
         } catch (err) {
             setError("Errore di connessione al server");
@@ -120,7 +122,7 @@ const Signup = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full py-3 rounded-lg font-semibold text-white transition duration-300 ${
+                    className={`cursor-pointer w-full py-3 rounded-lg font-semibold text-white transition duration-300 ${
                         loading
                             ? "bg-orange-400 cursor-not-allowed"
                             : "bg-orange-600 hover:bg-orange-700"
