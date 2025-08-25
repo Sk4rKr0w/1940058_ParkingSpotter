@@ -20,7 +20,7 @@ const Contact = () => {
 
             <div
                 ref={containerRef}
-                className="relative z-10 w-full md:w-[75%] bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl my-10 p-5 md:p-10 border border-white/20"
+                className="relative z-5 w-full md:w-[75%] bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl my-10 p-5 md:p-10 border border-white/20"
             >
                 <h2 className="text-3xl font-extrabold mb-8 text-center text-white">
                     Contact Us

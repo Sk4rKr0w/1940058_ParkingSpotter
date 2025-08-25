@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import gsap from "gsap";
+import { NavLink } from "react-router-dom";
 
 const Profile = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -80,6 +81,13 @@ const Profile = () => {
                                 ID: {user.id}
                             </p>
                         </div>
+
+                        <NavLink
+                            to="/reservation"
+                            className="flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                        >
+                            Make your own reservation!
+                        </NavLink>
                     </div>
 
                     <div className="border-t border-gray-200 my-6" />
