@@ -10,6 +10,16 @@ gsap.registerPlugin(ScrollTrigger);
 const About = () => {
     const imgRef = useRef(null);
     const textRef = useRef(null);
+    const descRef = useRef(null);
+
+    const gridImgRefs = useRef([]);
+    gridImgRefs.current = [];
+
+    const addGridImgRef = (el) => {
+        if (el && !gridImgRefs.current.includes(el)) {
+            gridImgRefs.current.push(el);
+        }
+    };
 
     useEffect(() => {
         if (imgRef.current) {
@@ -21,13 +31,26 @@ const About = () => {
                     x: 0,
                     duration: 1.5,
                     ease: "power3.out",
+                }
+            );
+        }
+
+        gridImgRefs.current.forEach((img) => {
+            gsap.fromTo(
+                img,
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power2.out",
                     scrollTrigger: {
-                        trigger: imgRef.current,
+                        trigger: img,
                         start: "top 90%",
                     },
                 }
             );
-        }
+        });
 
         if (textRef.current) {
             gsap.fromTo(
@@ -43,6 +66,20 @@ const About = () => {
                         trigger: textRef.current,
                         start: "top 85%",
                     },
+                }
+            );
+        }
+
+        if (descRef.current) {
+            gsap.fromTo(
+                descRef.current,
+                { opacity: 0, x: -50 },
+                {
+                    opacity: 1,
+                    x: 0,
+                    delay: 0.5,
+                    duration: 1,
+                    ease: "power2.out",
                 }
             );
         }
@@ -85,7 +122,10 @@ const About = () => {
             <hr className="w-[90%] my-10" />
 
             <div className="max-w-5xl mx-auto text-center space-y-10 px-6">
-                <p className="text-lg text-gray-600 leading-relaxed">
+                <p
+                    ref={descRef}
+                    className="text-lg text-gray-600 leading-relaxed"
+                >
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     Necessitatibus aliquid temporibus soluta illum totam nihil,
                     quae exercitationem delectus corporis? Illum voluptates
@@ -97,11 +137,13 @@ const About = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <img
+                        ref={addGridImgRef}
                         src="about_bg.jpg"
                         alt="Logo"
                         className="rounded-2xl shadow-lg object-cover w-full h-64"
                     />
                     <img
+                        ref={addGridImgRef}
                         src="about_bg.jpg"
                         alt="Logo"
                         className="rounded-2xl shadow-lg object-cover w-full h-64"

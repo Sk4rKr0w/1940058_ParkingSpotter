@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useUser } from "../utils/UserContext";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { login } = useUser();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,13 +26,13 @@ const Login = () => {
             });
 
             const data = await response.json();
-            print(data);
 
             if (!response.ok) {
                 setError(data.message || "Errore di login");
             } else {
-                // Login riuscito: salva token, redireziona, ecc.
-                console.log("Login effettuato con successo!", data);
+                localStorage.setItem("token", data.token);
+                login(data.user);
+                navigate("/profile");
             }
         } catch (err) {
             setError("Errore di connessione al server");
