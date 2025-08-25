@@ -5,14 +5,16 @@ const cors = require('cors');
 
 const { sequelize } = require('./models');
 const reservationsRoutes = require('./routes/reservations');
+const parkingsRoutes = require('./routes/parking');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/reservations', reservationsRoutes);
+app.use('/parkings', parkingsRoutes);
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4002;
 
 async function start() {
   try {

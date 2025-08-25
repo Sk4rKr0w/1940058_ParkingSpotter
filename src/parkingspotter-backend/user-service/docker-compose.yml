@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  user-service:
+    build: .
+    env_file: .env
+    ports:
+      - "4001:4001"
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_PASS}"
+      POSTGRES_DB: "${DATABASE_NAME}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - usp-net
+
+volumes:
+  pgdata:
+
+networks:
+  usp-net:

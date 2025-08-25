@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const UserModel = require('./user');
 const ReservationModel = require('./reservation');
+const ParkingModel = require('./parking');
 
 const {
   DATABASE_HOST,
@@ -19,12 +20,18 @@ const sequelize = new Sequelize(
 
 const User = UserModel(sequelize);
 const Reservation = ReservationModel(sequelize);
+const Parking = ParkingModel(sequelize);
 
+// Define associations
 User.hasMany(Reservation, { foreignKey: 'userId' });
 Reservation.belongsTo(User, { foreignKey: 'userId' });
+
+Parking.hasMany(Reservation, { foreignKey: "parkingId" });
+Reservation.belongsTo(Parking, { foreignKey: "parkingId" });
 
 module.exports = {
   sequelize,
   User,
-  Reservation
+  Reservation,
+  Parking
 };
