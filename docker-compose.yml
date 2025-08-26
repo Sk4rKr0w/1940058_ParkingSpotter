@@ -5,6 +5,18 @@ services:
     env_file: ./src/parkingspotter-backend/user-service/.env
     ports:
       - "4001:4001"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  reservations-service:
+    build: ./src/parkingspotter-backend/reservations-service
+    env_file: ./src/parkingspotter-backend/reservations-service/.env
+    ports:
+      - "4002:4002"
+    restart: always
     depends_on:
       - postgres
     networks:
@@ -21,6 +33,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    restart: always
     networks:
       - usp-net
 
@@ -31,6 +44,7 @@ services:
       - /app/node_modules
     ports:
       - "5173:5173"
+    restart: always
     networks:
       - usp-net
     stdin_open: true
