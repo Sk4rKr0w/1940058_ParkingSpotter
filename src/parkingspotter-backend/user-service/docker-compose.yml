@@ -5,6 +5,7 @@ services:
     env_file: .env
     ports:
       - "4001:4001"
+    restart: always
     depends_on:
       - postgres
     networks:
@@ -20,6 +21,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    restart: always
     networks:
       - usp-net
 
