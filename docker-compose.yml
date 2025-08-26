@@ -10,6 +10,16 @@ services:
     networks:
       - usp-net
 
+  reservations-service:
+    build: ./src/parkingspotter-backend/reservations-service
+    env_file: ./src/parkingspotter-backend/reservations-service/.env
+    ports:
+      - "4002:4002"
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
   postgres:
     image: postgres:17
     env_file: ./src/parkingspotter-backend/user-service/.env
