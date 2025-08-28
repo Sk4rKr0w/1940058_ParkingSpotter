@@ -26,6 +26,14 @@ module.exports = (sequelize) => {
     occupiedSpots: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    hourlyPrice: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.ENUM('uncovered', 'covered', 'underground', 'multi-storey'),
+      defaultValue: 'active'
     }
   });
   return Parking;
