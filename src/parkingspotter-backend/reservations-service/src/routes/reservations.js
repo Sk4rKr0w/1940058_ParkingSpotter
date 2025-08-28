@@ -8,10 +8,11 @@ const router = express.Router();
 // Create reservation
 router.post('/', authenticate, async (req, res) => {
   try {
-    const { spotId, startTime, endTime } = req.body;
+    const { spotId, carPlate, startTime, endTime } = req.body;
     const reservation = await Reservation.create({
       userId: req.user.id,
       spotId,
+      carPlate,
       startTime,
       endTime
     });
