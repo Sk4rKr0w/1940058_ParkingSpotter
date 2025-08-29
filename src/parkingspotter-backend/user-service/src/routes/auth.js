@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const { User } = require('../models');
 
+const { generateUniqueCode } = require('../utils/uniqueCode')
+
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -21,7 +23,7 @@ router.post('/register', async (req, res) => {
     if (existing) return res.status(409).json({ message: 'Email already exists' });
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed, role: role || 'driver' });
+    const user = await User.create({ name, email, password: hashed, role: role || 'driver', uniqueCode: (role == 'operator' || role == 'admin' ? generateUniqueCode() : null)});
 
     return res.status(201).json({ id: user.id, email: user.email, name: user.name, role: user.role });
   } catch (err) {
