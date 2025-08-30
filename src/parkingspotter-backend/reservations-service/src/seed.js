@@ -1,5 +1,7 @@
 const { Parking } = require("./models");
 
+types = ['uncovered', 'covered', 'underground', 'multi-storey'];
+
 async function seedParkings() {
   const count = await Parking.count();
   if (count > 0) {
@@ -35,6 +37,8 @@ async function seedParkings() {
       longitude: city.lon + lonOffset,
       totalSpots: Math.floor(Math.random() * 200) + 50,
       occupiedSpots: 0,
+      hourlyPrice: Math.floor(Math.random() * 10 + 1),
+      type: types[Math.floor(Math.random() * 4)]
     });
   }
 
