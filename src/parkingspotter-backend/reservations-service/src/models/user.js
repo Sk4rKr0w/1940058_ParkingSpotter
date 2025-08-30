@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
     role: { type: DataTypes.ENUM('driver', 'operator', 'admin'), allowNull: false, defaultValue: 'driver' },
     uniqueCode: { type: DataTypes.STRING, allowNull: true, unique: true }
   }, {
-    tableName: 'users',
+    tableName: 'Users',
     timestamps: true
   });
 

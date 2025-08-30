@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
         return decryptUniqueCode(encrypted);
       }}
   }, {
-    tableName: 'users',
+    tableName: 'Users',
     timestamps: true
   });
 

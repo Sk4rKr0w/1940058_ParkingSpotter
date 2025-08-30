@@ -1,10 +1,14 @@
 const crypto = require("crypto");
 
 const ALGORITHM = "aes-256-gcm";
-const SECRET_KEY = process.env.AES_SECRET_KEY;
+const SECRET_KEY = Buffer.from(process.env.AES_SECRET_KEY, "hex");
 const IV_LENGTH = 16; // AES block size
 
 function encryptUniqueCode(text) {
+  if (!text) {
+    return null; // or return value as-is
+  }
+
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
 
@@ -20,6 +24,10 @@ function encryptUniqueCode(text) {
 }
 
 function decryptUniqueCode(encrypted) {
+  if (!encrypted) {
+    return null; // or return value as-is
+  }
+
   if (!encrypted) return null;
   const { iv, content, tag } = JSON.parse(encrypted);
 
