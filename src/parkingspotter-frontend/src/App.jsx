@@ -10,6 +10,8 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import Reservation from "./pages/Reservation";
+import ManageSpots from "./pages/ManageSpots";
+import AddSpot from "./pages/AddSpot";
 
 function App() {
     return (
@@ -26,6 +28,8 @@ function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/reservation" element={<Reservation />} />
+                    <Route path="/manage-spots" element={<ManageSpots />} />
+                    <Route path="/add-spot" element={<AddSpot />} />
                 </Routes>
                 <Footer />
             </UserProvider>

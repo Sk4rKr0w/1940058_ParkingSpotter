@@ -1,180 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// Database di parcheggi organizzato per città italiane principali
-const parkingDatabase = {
-    Roma: [
-        {
-            id: 1,
-            lat: 41.9028,
-            lng: 12.4964,
-            nome: "Parcheggio Colosseo",
-            posti: 150,
-            prezzo: "2.50€/h",
-            tipo: "Coperto",
-        },
-        {
-            id: 2,
-            lat: 41.8986,
-            lng: 12.4769,
-            nome: "Parcheggio Pantheon",
-            posti: 80,
-            prezzo: "3.00€/h",
-            tipo: "Scoperto",
-        },
-        {
-            id: 3,
-            lat: 41.9109,
-            lng: 12.4818,
-            nome: "Parcheggio Piazza di Spagna",
-            posti: 60,
-            prezzo: "3.50€/h",
-            tipo: "Interrato",
-        },
-        {
-            id: 4,
-            lat: 41.896,
-            lng: 12.4823,
-            nome: "Parcheggio Campo de' Fiori",
-            posti: 45,
-            prezzo: "2.80€/h",
-            tipo: "Scoperto",
-        },
-    ],
-    Milano: [
-        {
-            id: 5,
-            lat: 45.4642,
-            lng: 9.19,
-            nome: "Parcheggio Duomo",
-            posti: 200,
-            prezzo: "4.00€/h",
-            tipo: "Interrato",
-        },
-        {
-            id: 6,
-            lat: 45.4656,
-            lng: 9.1859,
-            nome: "Parcheggio La Scala",
-            posti: 120,
-            prezzo: "3.80€/h",
-            tipo: "Coperto",
-        },
-        {
-            id: 7,
-            lat: 45.4721,
-            lng: 9.1927,
-            nome: "Parcheggio Brera",
-            posti: 90,
-            prezzo: "3.50€/h",
-            tipo: "Scoperto",
-        },
-    ],
-    Napoli: [
-        {
-            id: 8,
-            lat: 40.8518,
-            lng: 14.2681,
-            nome: "Parcheggio Centro Storico",
-            posti: 100,
-            prezzo: "2.00€/h",
-            tipo: "Coperto",
-        },
-        {
-            id: 9,
-            lat: 40.8359,
-            lng: 14.2488,
-            nome: "Parcheggio Porto",
-            posti: 180,
-            prezzo: "1.80€/h",
-            tipo: "Scoperto",
-        },
-    ],
-    Firenze: [
-        {
-            id: 10,
-            lat: 43.7696,
-            lng: 11.2558,
-            nome: "Parcheggio Uffizi",
-            posti: 75,
-            prezzo: "3.20€/h",
-            tipo: "Interrato",
-        },
-        {
-            id: 11,
-            lat: 43.7731,
-            lng: 11.256,
-            nome: "Parcheggio Duomo",
-            posti: 95,
-            prezzo: "3.00€/h",
-            tipo: "Coperto",
-        },
-    ],
-    Venezia: [
-        {
-            id: 12,
-            lat: 45.4408,
-            lng: 12.3155,
-            nome: "Parcheggio Tronchetto",
-            posti: 3000,
-            prezzo: "25.00€/giorno",
-            tipo: "Multipiano",
-        },
-        {
-            id: 13,
-            lat: 45.4434,
-            lng: 12.2764,
-            nome: "Parcheggio Mestre",
-            posti: 500,
-            prezzo: "15.00€/giorno",
-            tipo: "Scoperto",
-        },
-    ],
-    Torino: [
-        {
-            id: 14,
-            lat: 45.0703,
-            lng: 7.6869,
-            nome: "Parcheggio Porta Nuova",
-            posti: 150,
-            prezzo: "2.20€/h",
-            tipo: "Interrato",
-        },
-        {
-            id: 15,
-            lat: 45.0614,
-            lng: 7.6722,
-            nome: "Parcheggio Mole Antonelliana",
-            posti: 80,
-            prezzo: "2.50€/h",
-            tipo: "Coperto",
-        },
-    ],
-    Bologna: [
-        {
-            id: 19,
-            lat: 44.4949,
-            lng: 11.3426,
-            nome: "Parcheggio Piazza Maggiore",
-            posti: 90,
-            prezzo: "2.80€/h",
-            tipo: "Interrato",
-        },
-        {
-            id: 20,
-            lat: 44.4948,
-            lng: 11.3464,
-            nome: "Parcheggio Due Torri",
-            posti: 70,
-            prezzo: "3.00€/h",
-            tipo: "Coperto",
-        },
-    ],
-};
 
 // Funzione per cercare coordinate di una città usando Nominatim
 async function geocodeCity(cityName) {
@@ -244,39 +73,44 @@ export default function MapComponent() {
         setIsLoading(true);
         setSearchMessage("");
 
-        // Prima controlla se la città è nel nostro database
-        const cityKey = Object.keys(parkingDatabase).find((city) =>
-            city.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        // 1. Trova le coordinate della città
+        const coords = await geocodeCity(searchQuery);
 
-        if (cityKey) {
-            // Città trovata nel database
-            const parkings = parkingDatabase[cityKey];
-            setVisibleMarkers(parkings);
+        if (coords) {
+            setMapCenter({ lat: coords.lat, lng: coords.lng });
+            setMapZoom(13);
 
-            // Centra la mappa sul primo parcheggio della città
-            if (parkings.length > 0) {
-                setMapCenter({ lat: parkings[0].lat, lng: parkings[0].lng });
-                setMapZoom(14);
+            try {
+                // 2. Chiama l'API dei parcheggi vicini
+                const radius = 5; // Raggio in km
+                const res = await fetch(
+                    `http://localhost:4002/parkings/nearby?lat=${coords.lat}&lon=${coords.lng}&radius=${radius}`
+                );
+
+                if (!res.ok) {
+                    throw new Error("Errore nella chiamata API");
+                }
+
+                const data = await res.json();
+                console.log("Geocoding data:", data);
+
+                if (data.length > 0) {
+                    setVisibleMarkers(data);
+                    setSearchMessage(
+                        `Trovati ${data.length} parcheggi vicino a ${searchQuery}`
+                    );
+                } else {
+                    setVisibleMarkers([]);
+                    setSearchMessage(
+                        `Nessun parcheggio trovato vicino a ${searchQuery}`
+                    );
+                }
+            } catch (err) {
+                console.error(err);
+                setSearchMessage("Errore nel caricamento dei parcheggi");
             }
-            setSearchMessage(
-                `Trovati ${parkings.length} parcheggi a ${cityKey}`
-            );
         } else {
-            // Cerca la città usando geocoding
-            const coords = await geocodeCity(searchQuery);
-            if (coords) {
-                setMapCenter({ lat: coords.lat, lng: coords.lng });
-                setMapZoom(13);
-                setVisibleMarkers([]);
-                setSearchMessage(
-                    `Posizione trovata: ${coords.displayName}. Non ci sono parcheggi registrati in questa zona.`
-                );
-            } else {
-                setSearchMessage(
-                    "Città non trovata. Prova con un nome diverso."
-                );
-            }
+            setSearchMessage("Città non trovata. Prova con un nome diverso.");
         }
 
         setIsLoading(false);
@@ -316,19 +150,7 @@ export default function MapComponent() {
 
                         {searchMessage && (
                             <p className="text-sm text-gray-600 mb-2">
-                                {searchMessage.startsWith(
-                                    "Posizione trovata"
-                                ) ? (
-                                    <>
-                                        <strong>Posizione trovata:</strong>{" "}
-                                        {searchMessage.replace(
-                                            "Posizione trovata: ",
-                                            ""
-                                        )}
-                                    </>
-                                ) : (
-                                    searchMessage
-                                )}
+                                {searchMessage}
                             </p>
                         )}
                     </div>
@@ -358,7 +180,13 @@ export default function MapComponent() {
                 </div>
 
                 {/* Mappa (a destra su desktop, sotto su mobile) */}
-                <div className="md:flex-1 h-64 md:h-auto rounded-xl overflow-hidden shadow-md">
+                <div className="md:flex-1 h-64 md:h-auto rounded-xl overflow-hidden shadow-md relative">
+                    {isLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
+                            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    )}
+
                     <MapContainer
                         center={[mapCenter.lat, mapCenter.lng]}
                         zoom={mapZoom}
@@ -380,24 +208,22 @@ export default function MapComponent() {
                         {visibleMarkers.map((parking) => (
                             <Marker
                                 key={parking.id}
-                                position={[parking.lat, parking.lng]}
+                                position={[parking.latitude, parking.longitude]} // dati API
                                 icon={createCustomIcon(
-                                    parking.posti,
-                                    parking.tipo
+                                    parking.totalSpots, // numero posti
+                                    parking.tipo || "Scoperto" // se manca, metti default
                                 )}
                             >
                                 <Popup>
                                     <div className="text-sm space-y-1">
-                                        <strong>{parking.nome}</strong>
+                                        <strong>{parking.name}</strong>
                                         <div className="text-blue-600">
-                                            📍 Tipo: {parking.tipo}
+                                            📍 Tipo: {parking.tipo || "N/D"}
                                         </div>
                                         <div className="text-green-600">
-                                            🚗 Posti: {parking.posti}
+                                            🚗 Posti: {parking.totalSpots}
                                         </div>
-                                        <div className="text-red-600">
-                                            💰 Prezzo: {parking.prezzo}
-                                        </div>
+                                        {/* Prezzo non disponibile nell'API */}
                                     </div>
                                 </Popup>
                             </Marker>
