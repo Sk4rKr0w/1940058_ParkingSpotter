@@ -82,12 +82,23 @@ const Profile = () => {
                             </p>
                         </div>
 
-                        <NavLink
-                            to="/reservation"
-                            className="flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
-                        >
-                            Make your own reservation!
-                        </NavLink>
+                        <div className="flex flex-col gap-y-4">
+                            <NavLink
+                                to="/reservation"
+                                className="flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                            >
+                                Make your own reservation!
+                            </NavLink>
+
+                            {user.role === "operator" && (
+                                <NavLink
+                                    to="/manage-spots"
+                                    className="flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                >
+                                    Manage your parking spots
+                                </NavLink>
+                            )}
+                        </div>
                     </div>
 
                     <div className="border-t border-gray-200 my-6" />
