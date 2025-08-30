@@ -8,16 +8,16 @@ const router = express.Router();
 // Create reservation
 router.post('/', authenticate, async (req, res) => {
   try {
-    const { spotId, carPlate, startTime, endTime } = req.body;
+    const { parkingId, carPlate, startTime, endTime } = req.body;
     const reservation = await Reservation.create({
       userId: req.user.id,
-      spotId,
+      parkingId,
       carPlate,
       startTime,
       endTime
     });
 
-    await sendNotification(req.user.id, `Your reservation for spot ${spotId} is confirmed.`);
+    await sendNotification(req.user.id, `Your reservation for spot ${parkingId} is confirmed.`);
     res.json({ message: 'Reservation created', reservation });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -33,7 +33,7 @@ router.post('/:id/cancel', authenticate, async (req, res) => {
   reservation.status = 'cancelled';
   await reservation.save();
 
-  await sendNotification(req.user.id, `Your reservation for spot ${reservation.spotId} was cancelled.`);
+  await sendNotification(req.user.id, `Your reservation for spot ${reservation.parkingId} was cancelled.`);
   res.json({ message: 'Reservation cancelled', reservation });
 });
 
