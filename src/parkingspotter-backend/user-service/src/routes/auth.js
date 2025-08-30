@@ -54,4 +54,28 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Edit user info
+router.post('/user', authenticate, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update fields if they are provided
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10);
+
+    await user.save();
+
+    res.json({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
 module.exports = router;

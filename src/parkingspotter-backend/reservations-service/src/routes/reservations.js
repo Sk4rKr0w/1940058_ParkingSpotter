@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { Reservation, User } = require('../models');
+const { Reservation, Parking } = require('../models');
 const { sendNotification } = require('../utils/notifications');
 const { authenticate } = require('../middleware/auth');
 const router = express.Router();
@@ -39,7 +39,10 @@ router.post('/:id/cancel', authenticate, async (req, res) => {
 
 // Get user reservations
 router.get('/', authenticate, async (req, res) => {
-  const reservations = await Reservation.findAll({ where: { userId: req.user.id } });
+  const reservations = await Reservation.findAll({
+    where: { userId: req.user.id },
+    include: [ { model: Parking } ]
+  });
   res.json(reservations);
 });
 
