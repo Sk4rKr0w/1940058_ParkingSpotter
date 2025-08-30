@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 const { generateUniqueCode } = require('../utils/uniqueCode')
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
