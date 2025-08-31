@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 const { generateUniqueCode } = require('../utils/uniqueCode')
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -51,6 +52,30 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Edit user info
+router.post('/user', authenticate, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update fields if they are provided
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10);
+
+    await user.save();
+
+    res.json({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
   }
 });
 
