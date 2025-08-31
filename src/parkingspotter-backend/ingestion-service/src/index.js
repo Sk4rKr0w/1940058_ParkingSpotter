@@ -18,7 +18,7 @@ async function start() {
     const exchange = "sensor_exchange";
     await channel.assertExchange(exchange, "fanout", { durable: true });
 
-    const q = await channel.assertQueue("parking_updates", { durable: true });
+    const q = await channel.assertQueue("parking_events", { durable: true });
     channel.bindQueue(q.queue, exchange, "");
 
     console.log("Waiting for sensor messages...");
