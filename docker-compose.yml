@@ -87,6 +87,14 @@ services:
     networks:
       - usp-net
 
+  sensor-simulator:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
 volumes:
   pgdata:
   pgadmin_data:
