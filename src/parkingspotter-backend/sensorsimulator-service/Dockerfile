@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY sensor_simulator.py .
 
 # Run the simulator
-CMD ["python", "sensor_simulator.py"]
+CMD ["python", "-u", "sensor_simulator.py"]
