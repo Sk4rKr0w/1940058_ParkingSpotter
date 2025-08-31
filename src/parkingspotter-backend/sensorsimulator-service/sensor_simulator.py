@@ -4,15 +4,13 @@ import time
 import random
 import os
 
-# Load env (or set manually)
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
 RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT", "5672"))
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "parking_events")
-
-# Operator and Parking IDs (from DB)
-OPERATOR_ID = 1
-PARKING_ID = 101
-SECRET_CODE = "MY_UNIQUE_SECRET_123456789"  # you fetch this from dashboard normally
+RABBITMQ_USER = os.getenv("RABBITMQ_DEFAULT_USER", "parking_events")
+RABBITMQ_PASS = os.getenv("RABBITMQ_DEFAULT_PASS", "parking_events")
+UNIQUE_CODE = os.getenv("UNIQUE_CODE", "parking_events")
+PARKING_ID = int(os.getenv("PARKING_ID", "1"))
 
 def connect():
     """Connect to RabbitMQ."""
@@ -26,17 +24,16 @@ def connect():
 def send_event(channel, event_type):
     """Send entry/exit event."""
     message = {
-        "operatorId": OPERATOR_ID,
         "parkingId": PARKING_ID,
-        "secretCode": SECRET_CODE,  # auth token
+        "uniqueCode": UNIQUE_CODE,  # auth token
         "event": event_type,        # "enter" or "exit"
         "timestamp": int(time.time())
     }
     channel.basic_publish(
-        exchange="",
+        exchange="sensor_exchange",
         routing_key=RABBITMQ_QUEUE,
         body=json.dumps(message),
-        properties=pika.BasicProperties(delivery_mode=2)  # persistent
+        properties=pika.BasicProperties(delivery_mode=2)
     )
     print(f" [x] Sent {message}")
 
@@ -44,12 +41,12 @@ def simulate():
     connection, channel = connect()
     try:
         while True:
-            # Random choice: enter or exit
+            # Random choice: car enter or exit
             event = random.choice(["enter", "exit"])
             send_event(channel, event)
 
-            # Random delay between events (1–5 seconds)
-            time.sleep(random.randint(1, 5))
+            # Random delay between events (30–60 seconds)
+            time.sleep(random.randint(30, 60))
     except KeyboardInterrupt:
         print("Simulation stopped")
     finally:

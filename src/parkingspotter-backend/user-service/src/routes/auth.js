@@ -15,18 +15,18 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 // Signup
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'name, email and password are required' });
+    const { name, surname, email, password, role } = req.body;
+    if (!name || !surname || !email || !password) {
+      return res.status(400).json({ message: 'name, surname, email and password are required' });
     }
 
     const existing = await User.findOne({ where: { email } });
     if (existing) return res.status(409).json({ message: 'Email already exists' });
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed, role: role || 'driver', uniqueCode: (role == 'operator' || role == 'admin' ? generateUniqueCode() : null)});
+    const user = await User.create({ name, surname, email, password: hashed, role: role || 'driver', uniqueCode: (role == 'operator' || role == 'admin' ? generateUniqueCode() : null)});
 
-    return res.status(201).json({ id: user.id, email: user.email, name: user.name, role: user.role });
+    return res.status(201).json({ id: user.id, email: user.email, name: user.name, surname: user.surname, role: user.role });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
     const payload = { userId: user.id, role: user.role, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-    return res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    return res.json({ token, user: { id: user.id, name: user.name, surname: user.surname, email: user.email, role: user.role } });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
 // Edit user info
 router.post('/user', authenticate, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, surname, email, password } = req.body;
 
     const user = await User.findByPk(req.user.id);
     if (!user) {
@@ -67,6 +67,7 @@ router.post('/user', authenticate, async (req, res) => {
 
     // Update fields if they are provided
     if (name) user.name = name;
+    if (surname) user.surname = surname;
     if (email) user.email = email;
     if (password) user.password = await bcrypt.hash(password, 10);
 
