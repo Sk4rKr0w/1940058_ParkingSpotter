@@ -59,7 +59,7 @@ function MapController({ center, zoom }) {
     return null;
 }
 
-export default function MapComponent() {
+export default function MapComponent({ onSelectParking }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [visibleMarkers, setVisibleMarkers] = useState([]);
     const [mapCenter, setMapCenter] = useState({ lat: 41.8719, lng: 12.5674 });
@@ -218,13 +218,31 @@ export default function MapComponent() {
                                     <div className="text-sm space-y-1">
                                         <strong>{parking.name}</strong>
                                         <div className="text-blue-600">
-                                            📍 Tipo: {parking.tipo || "N/D"}
+                                            🏙 Tipo:{" "}
+                                            {parking.type
+                                                .charAt(0)
+                                                .toUpperCase() +
+                                                parking.type.slice(1) || "N/D"}
                                         </div>
                                         <div className="text-green-600">
-                                            🚗 Posti: {parking.totalSpots}
+                                            📅 Posti: {parking.totalSpots}
                                         </div>
-                                        {/* Prezzo non disponibile nell'API */}
+                                        <div className="text-orange-600">
+                                            ✔ Posti Liberi:{" "}
+                                            {parking.totalSpots -
+                                                parking.occupiedSpots}
+                                        </div>
+                                        <div className="text-red-600">
+                                            💲 Tariffa Oraria:{" "}
+                                            {parking.hourlyPrice}€/h
+                                        </div>
                                     </div>
+                                    <button
+                                        onClick={() => onSelectParking(parking)}
+                                        className="cursor-pointer inline-flex items-center justify-center w-full my-2 bg-blue-500 px-4 py-2 text-white font-medium rounded-lg"
+                                    >
+                                        Prenota
+                                    </button>
                                 </Popup>
                             </Marker>
                         ))}
