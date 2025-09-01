@@ -14,8 +14,9 @@ PARKING_ID = int(os.getenv("PARKING_ID", "1"))
 
 def connect():
     """Connect to RabbitMQ."""
+    credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT)
+        pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=credentials)
     )
     channel = connection.channel()
     channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True)
