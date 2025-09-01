@@ -4,10 +4,24 @@ import gsap from "gsap";
 import { NavLink } from "react-router-dom";
 
 const Profile = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [editModalOpen, setEditModalOpen] = useState(false);
+
+    // Stati per il form
+    const [formData, setFormData] = useState({
+        name: user?.name || "",
+        surname: user?.surname || "",
+        email: user?.email || "",
+    });
+    const [changePassword, setChangePassword] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [formError, setFormError] = useState("");
+    const [formSuccess, setFormSuccess] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const containerRef = useRef(null);
 
@@ -16,14 +30,18 @@ const Profile = () => {
 
         const fetchReservations = async () => {
             try {
-                const token = localStorage.getItem("token"); // assuming you store JWT here
+                const token = localStorage.getItem("token");
                 const res = await axios.get(
-                    "http://localhost:4001/reservations",
+                    "http://localhost:4002/reservations",
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
-                setReservations(res.data);
+                const sortedReservations = res.data.sort(
+                    (a, b) => new Date(b.startTime) - new Date(a.startTime)
+                );
+                setReservations(sortedReservations);
+                console.log(res.data);
             } catch (err) {
                 setError("Failed to fetch reservations.");
                 console.error(err);
@@ -33,7 +51,7 @@ const Profile = () => {
         };
 
         fetchReservations();
-    }, [user]);
+    }, []); // <- vuoto: solo al mount
 
     useEffect(() => {
         if (containerRef.current) {
@@ -46,6 +64,72 @@ const Profile = () => {
     }, []);
 
     const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
+
+    const handleCancelReservation = (id) => async () => {
+        if (
+            !window.confirm("Are you sure you want to cancel this reservation?")
+        )
+            return;
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://localhost:4002/reservations/${id}/cancel`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setReservations((prev) => prev.filter((r) => r.id !== id));
+        } catch (err) {
+            setError("Failed to cancel reservation.");
+            console.error(err);
+        }
+    };
+
+    // Funzione per aggiornare il profilo
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setFormError("");
+        setFormSuccess("");
+
+        if (changePassword && newPassword !== confirmPassword) {
+            setFormError("Passwords do not match.");
+            return;
+        }
+
+        try {
+            setSaving(true);
+            const token = localStorage.getItem("token");
+            const payload = {
+                name: formData.name,
+                surname: formData.surname,
+                email: formData.email,
+                ...(changePassword && newPassword
+                    ? { password: newPassword }
+                    : {}),
+            };
+
+            const res = await axios.post(
+                "http://localhost:4001/auth/user",
+                payload,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            // Aggiorna localStorage con i nuovi dati dell'utente
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+
+            setFormSuccess("Profile updated successfully!");
+            setTimeout(() => {
+                setEditModalOpen(false);
+                window.location.reload(); // per riflettere le modifiche subito
+            }, 1000);
+        } catch (err) {
+            setFormError("Failed to update profile.");
+            console.error(err);
+        } finally {
+            setSaving(false);
+        }
+    };
 
     return (
         <div className="w-full min-h-screen bg-[#1c1c1c] flex flex-col items-center px-4 py-8">
@@ -85,7 +169,7 @@ const Profile = () => {
                         <div className="flex flex-col gap-y-4">
                             <NavLink
                                 to="/reservation"
-                                className="flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                className="cursor-pointer flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
                             >
                                 Make your own reservation!
                             </NavLink>
@@ -93,11 +177,17 @@ const Profile = () => {
                             {user.role === "operator" && (
                                 <NavLink
                                     to="/manage-spots"
-                                    className="flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                    className="cursor-pointer flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
                                 >
                                     Manage your parking spots
                                 </NavLink>
                             )}
+                            <button
+                                onClick={() => setEditModalOpen(true)}
+                                className="cursor-pointer flex justify-center items-center bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                            >
+                                Edit Profile
+                            </button>
                         </div>
                     </div>
 
@@ -122,34 +212,54 @@ const Profile = () => {
                                 {reservations.map((r) => (
                                     <li
                                         key={r.id}
-                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow"
+                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-row justify-between items-center"
                                     >
-                                        <p className="text-gray-700">
-                                            <strong>Spot ID:</strong> {r.spotId}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>From:</strong>{" "}
-                                            {formatDate(r.startTime)}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>To:</strong>{" "}
-                                            {formatDate(r.endTime)}
-                                        </p>
-                                        <p className="text-gray-700">
-                                            <strong>Status:</strong>{" "}
-                                            <span
-                                                className={`font-semibold ${
-                                                    r.status === "active"
-                                                        ? "text-green-600"
-                                                        : r.status ===
-                                                          "completed"
-                                                        ? "text-gray-600"
-                                                        : "text-red-600"
-                                                }`}
+                                        <div>
+                                            <p className="text-gray-700">
+                                                <strong>Parking Spot:</strong>{" "}
+                                                {r.Parking.name}
+                                            </p>
+                                            <p className="text-gray-700">
+                                                <strong>Vehicle:</strong>{" "}
+                                                {r.carPlate.toUpperCase()}
+                                            </p>
+                                            <p className="text-gray-700">
+                                                <strong>From:</strong>{" "}
+                                                {formatDate(r.startTime)}
+                                            </p>
+                                            <p className="text-gray-700">
+                                                <strong>To:</strong>{" "}
+                                                {formatDate(r.endTime)}
+                                            </p>
+                                            <p className="text-gray-700">
+                                                <strong>Status:</strong>{" "}
+                                                <span
+                                                    className={`font-semibold ${
+                                                        r.status === "active"
+                                                            ? "text-green-600"
+                                                            : r.status ===
+                                                              "completed"
+                                                            ? "text-gray-600"
+                                                            : "text-red-600"
+                                                    }`}
+                                                >
+                                                    {r.status
+                                                        .charAt(0)
+                                                        .toUpperCase() +
+                                                        r.status.slice(1)}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        {r.status === "active" && (
+                                            <button
+                                                onClick={handleCancelReservation(
+                                                    r.id
+                                                )}
+                                                className="cursor-pointer mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
                                             >
-                                                {r.status}
-                                            </span>
-                                        </p>
+                                                Cancel Reservation
+                                            </button>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -160,6 +270,119 @@ const Profile = () => {
                 <p className="text-gray-300 text-center mt-10">
                     No user data found. Please log in.
                 </p>
+            )}
+
+            {/* Modale per edit profile */}
+            {editModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg">
+                        <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+                        <form
+                            onSubmit={handleUpdateProfile}
+                            className="flex flex-col gap-4"
+                        >
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={formData.name}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        name: e.target.value,
+                                    })
+                                }
+                                className="border border-gray-300 rounded-lg p-2"
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Surname"
+                                value={formData.surname}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        surname: e.target.value,
+                                    })
+                                }
+                                className="border border-gray-300 rounded-lg p-2"
+                            />
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                value={formData.email}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        email: e.target.value,
+                                    })
+                                }
+                                className="border border-gray-300 rounded-lg p-2"
+                                required
+                            />
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={changePassword}
+                                    onChange={() =>
+                                        setChangePassword(!changePassword)
+                                    }
+                                    className="cursor-pointer"
+                                />
+                                <span className="text-gray-700">
+                                    Change Password
+                                </span>
+                            </div>
+
+                            {changePassword && (
+                                <>
+                                    <input
+                                        type="password"
+                                        placeholder="New Password"
+                                        value={newPassword}
+                                        onChange={(e) =>
+                                            setNewPassword(e.target.value)
+                                        }
+                                        className="border border-gray-300 rounded-lg p-2"
+                                    />
+                                    <input
+                                        type="password"
+                                        placeholder="Confirm Password"
+                                        value={confirmPassword}
+                                        onChange={(e) =>
+                                            setConfirmPassword(e.target.value)
+                                        }
+                                        className="border border-gray-300 rounded-lg p-2"
+                                    />
+                                </>
+                            )}
+
+                            {formError && (
+                                <p className="text-red-500">{formError}</p>
+                            )}
+                            {formSuccess && (
+                                <p className="text-green-500">{formSuccess}</p>
+                            )}
+
+                            <div className="flex justify-end gap-4 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditModalOpen(false)}
+                                    className="cursor-pointer px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                >
+                                    {saving ? "Saving..." : "Save"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );

@@ -1,23 +1,8 @@
 import { useState, useEffect } from "react";
+import { useUser } from "../utils/UserContext";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const userData = localStorage.getItem("user");
-
-        if (token && userData) {
-            try {
-                setUser(JSON.parse(userData));
-            } catch (error) {
-                console.error("Errore parsing user dal localStorage", error);
-                setUser(null);
-            }
-        } else {
-            setUser(null);
-        }
-    }, []);
+    const { user } = useUser();
 
     return (
         <div
