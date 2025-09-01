@@ -79,6 +79,19 @@ const Signup = () => {
                     />
                 </div>
 
+                {/* Cognome */}
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        name="surname"
+                        placeholder="Surname"
+                        value={formData.surname}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                </div>
+
                 {/* Email */}
                 <div className="mb-4">
                     <input
