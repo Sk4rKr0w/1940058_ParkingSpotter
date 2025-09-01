@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import gsap from "gsap";
 import { NavLink } from "react-router-dom";
+import ClipboardIcon from "../assets/clipboard.svg";
 
 const Profile = () => {
     const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
@@ -22,6 +23,7 @@ const Profile = () => {
     const [formError, setFormError] = useState("");
     const [formSuccess, setFormSuccess] = useState("");
     const [saving, setSaving] = useState(false);
+    const [uniqueCode, setUniqueCode] = useState("");
 
     const containerRef = useRef(null);
 
@@ -61,6 +63,26 @@ const Profile = () => {
                 { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
             );
         }
+    }, []);
+
+    useEffect(() => {
+        const fetchUniqueCode = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get(
+                    "http://localhost:4001/me/uniqueCode",
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                setUniqueCode(res.data.uniqueCode);
+                console.log("Unique Code:", res.data.uniqueCode);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchUniqueCode();
     }, []);
 
     const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
@@ -131,6 +153,16 @@ const Profile = () => {
         }
     };
 
+    const copyToClipboard = async () => {
+        if (!uniqueCode) return;
+        try {
+            await navigator.clipboard.writeText(uniqueCode);
+            alert("Copied to clipboard!"); // puoi sostituire con una toast notification se vuoi
+        } catch (err) {
+            console.error("Failed to copy!", err);
+        }
+    };
+
     return (
         <div className="w-full min-h-screen bg-[#1c1c1c] flex flex-col items-center px-4 py-8">
             {user ? (
@@ -166,10 +198,10 @@ const Profile = () => {
                             </p>
                         </div>
 
-                        <div className="flex flex-col gap-y-4">
+                        <div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4">
                             <NavLink
                                 to="/reservation"
-                                className="cursor-pointer flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                className="flex justify-center items-center bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
                             >
                                 Make your own reservation!
                             </NavLink>
@@ -177,17 +209,47 @@ const Profile = () => {
                             {user.role === "operator" && (
                                 <NavLink
                                     to="/manage-spots"
-                                    className="cursor-pointer flex justify-center items-center bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                    className="flex justify-center items-center bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
                                 >
                                     Manage your parking spots
                                 </NavLink>
                             )}
+
                             <button
                                 onClick={() => setEditModalOpen(true)}
-                                className="cursor-pointer flex justify-center items-center bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition"
+                                className="cursor-pointer flex justify-center md:col-span-2 items-center bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
                             >
                                 Edit Profile
                             </button>
+
+                            {(user.role === "operator" ||
+                                user.role === "admin") && (
+                                <div className="flex flex-col md:col-span-2 justify-center p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition-all hover:shadow-lg">
+                                    <div className="text-gray-700 text-sm text-left">
+                                        <span className="font-medium">
+                                            Your Unique Code:
+                                        </span>
+                                        <div
+                                            onClick={copyToClipboard}
+                                            className="flex justify-center items-center gap-3 mt-2 bg-gray-200/50 p-2 rounded-lg cursor-pointer hover:bg-gray-300/50 transition-all"
+                                        >
+                                            <span
+                                                className="font-semibold text-indigo-600 text-left truncate max-w-[360px]"
+                                                title={
+                                                    uniqueCode || "Loading..."
+                                                }
+                                            >
+                                                {uniqueCode || "Loading..."}
+                                            </span>
+                                            <img
+                                                src={ClipboardIcon}
+                                                alt="Clipboard"
+                                                className="w-5 h-5 hover:text-indigo-700 transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
