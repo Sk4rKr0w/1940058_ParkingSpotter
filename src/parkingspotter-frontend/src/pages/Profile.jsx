@@ -201,7 +201,16 @@ const Profile = () => {
                         <div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4">
                             <NavLink
                                 to="/reservation"
-                                className="flex justify-center items-center bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
+                                className={`flex justify-center items-center
+              bg-gradient-to-r from-orange-400 to-orange-500
+              hover:from-orange-500 hover:to-orange-600
+              text-white px-6 py-4 rounded-xl text-sm font-semibold
+              shadow-md transform transition-all duration-300 hover:scale-105
+              ${
+                  user.role === "operator" || user.role === "admin"
+                      ? ""
+                      : "col-span-2"
+              }`}
                             >
                                 Make your own reservation!
                             </NavLink>
