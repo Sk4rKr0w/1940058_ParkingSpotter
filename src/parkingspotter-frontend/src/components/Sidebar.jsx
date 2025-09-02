@@ -26,9 +26,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 <li>
                     <a href="/contact">Contact Us</a>
                 </li>
-                {user && (
+                {user ? (
                     <li>
                         <a href="/profile">Profile</a>
+                    </li>
+                ) : (
+                    <li>
+                        <a href="/login">Login</a>
                     </li>
                 )}
             </ul>

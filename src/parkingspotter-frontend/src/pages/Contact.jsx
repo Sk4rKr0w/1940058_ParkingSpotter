@@ -15,22 +15,22 @@ const Contact = () => {
     }, []);
 
     return (
-        <div className="relative flex justify-center min-h-screen items-start bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+        <div className="relative flex justify-center min-h-screen items-start bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4 py-8">
             <div className="absolute inset-0 bg-[url('/bg-pattern.svg')] opacity-10"></div>
 
             <div
                 ref={containerRef}
-                className="relative z-5 w-full md:w-[75%] bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl my-10 p-5 md:p-10 border border-white/20"
+                className="relative z-5 w-full max-w-3xl bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl my-10 p-6 sm:p-8 md:p-10 border border-white/20"
             >
-                <h2 className="text-3xl font-extrabold mb-8 text-center text-white">
+                <h2 className="text-2xl sm:text-3xl font-extrabold mb-8 text-center text-white">
                     Contact Us
                 </h2>
 
-                <form className="flex flex-col md:grid md:grid-cols-2 md:gap-x-10 space-y-6">
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Name */}
-                    <div className="flex flex-col gap-y-2">
+                    <div className="flex flex-col gap-y-3">
                         <label
-                            className="block text-white/80 font-medium mb-2"
+                            className="block text-white/80 font-medium"
                             htmlFor="name"
                         >
                             Name
@@ -40,14 +40,15 @@ const Contact = () => {
                             id="name"
                             name="name"
                             placeholder="Your name"
-                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                            className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
                         />
+                    </div>
 
-                        {/* Email */}
-
+                    {/* Email */}
+                    <div className="flex flex-col gap-y-3">
                         <label
-                            className="block text-white/80 font-medium mb-2"
+                            className="block text-white/80 font-medium"
                             htmlFor="email"
                         >
                             Email
@@ -57,15 +58,15 @@ const Contact = () => {
                             id="email"
                             name="email"
                             placeholder="your@email.com"
-                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                            className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
                         />
                     </div>
 
                     {/* Message */}
-                    <div className="md:row-span-2">
+                    <div className="md:col-span-2 flex flex-col gap-y-3">
                         <label
-                            className="block text-white/80 font-medium mb-2"
+                            className="block text-white/80 font-medium"
                             htmlFor="message"
                         >
                             Message
@@ -75,7 +76,7 @@ const Contact = () => {
                             name="message"
                             rows={5}
                             placeholder="Your message..."
-                            className="w-full px-2 py-2 md:px-4 md:py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+                            className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition max-h-48"
                             required
                         ></textarea>
                     </div>

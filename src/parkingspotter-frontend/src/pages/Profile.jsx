@@ -99,7 +99,11 @@ const Profile = () => {
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setReservations((prev) => prev.filter((r) => r.id !== id));
+            setReservations((prev) =>
+                prev.map((r) =>
+                    r.id === id ? { ...r, status: "cancelled" } : r
+                )
+            );
         } catch (err) {
             setError("Failed to cancel reservation.");
             console.error(err);
@@ -164,19 +168,22 @@ const Profile = () => {
     };
 
     return (
-        <div className="w-full min-h-screen bg-[#1c1c1c] flex flex-col items-center px-4 py-8">
+        <div className="w-full min-h-screen bg-[#1c1c1c] flex flex-col items-center px-4 py-6 sm:py-8">
             {user ? (
                 <div
                     ref={containerRef}
-                    className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-4xl"
+                    className="bg-white shadow-2xl rounded-2xl p-4 sm:p-8 w-full sm:max-w-full lg:max-w-4xl"
                 >
-                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-4xl font-semibold shadow-lg">
+                    {/* HEADER UTENTE */}
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-6">
+                        {/* Avatar */}
+                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl sm:text-4xl font-semibold shadow-lg">
                             {user.name.charAt(0).toUpperCase()}
                         </div>
 
+                        {/* Info */}
                         <div className="flex flex-col gap-2 text-center md:text-left">
-                            <h1 className="text-2xl font-bold text-gray-800">
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
                                 {user.name} {user.surname || "COGNOME"}
                             </h1>
                             <p className="text-gray-600 text-sm">
@@ -198,19 +205,20 @@ const Profile = () => {
                             </p>
                         </div>
 
-                        <div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4">
+                        {/* Azioni */}
+                        <div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4 w-full md:w-auto mt-4 md:mt-0">
                             <NavLink
                                 to="/reservation"
-                                className={`flex justify-center items-center
-              bg-gradient-to-r from-orange-400 to-orange-500
-              hover:from-orange-500 hover:to-orange-600
-              text-white px-6 py-4 rounded-xl text-sm font-semibold
-              shadow-md transform transition-all duration-300 hover:scale-105
-              ${
-                  user.role === "operator" || user.role === "admin"
-                      ? ""
-                      : "col-span-2"
-              }`}
+                                className={`w-full flex justify-center items-center
+                bg-gradient-to-r from-orange-400 to-orange-500
+                hover:from-orange-500 hover:to-orange-600
+                text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-sm font-semibold
+                shadow-md transform transition-all duration-300 hover:scale-105
+                ${
+                    user.role === "operator" || user.role === "admin"
+                        ? ""
+                        : "md:col-span-2"
+                }`}
                             >
                                 Make your own reservation!
                             </NavLink>
@@ -218,7 +226,7 @@ const Profile = () => {
                             {user.role === "operator" && (
                                 <NavLink
                                     to="/manage-spots"
-                                    className="flex justify-center items-center bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
+                                    className="w-full flex justify-center items-center bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
                                 >
                                     Manage your parking spots
                                 </NavLink>
@@ -226,14 +234,14 @@ const Profile = () => {
 
                             <button
                                 onClick={() => setEditModalOpen(true)}
-                                className="cursor-pointer flex justify-center md:col-span-2 items-center bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
+                                className="w-full cursor-pointer flex justify-center md:col-span-2 items-center bg-gray-500 hover:bg-gray-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-sm font-semibold shadow-md transform transition-all duration-300 hover:scale-105"
                             >
                                 Edit Profile
                             </button>
 
                             {(user.role === "operator" ||
                                 user.role === "admin") && (
-                                <div className="flex flex-col md:col-span-2 justify-center p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition-all hover:shadow-lg">
+                                <div className="w-full flex flex-col md:col-span-2 justify-center p-3 sm:p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition-all hover:shadow-lg">
                                     <div className="text-gray-700 text-sm text-left">
                                         <span className="font-medium">
                                             Your Unique Code:
@@ -243,7 +251,7 @@ const Profile = () => {
                                             className="flex justify-center items-center gap-3 mt-2 bg-gray-200/50 p-2 rounded-lg cursor-pointer hover:bg-gray-300/50 transition-all"
                                         >
                                             <span
-                                                className="font-semibold text-indigo-600 text-left truncate max-w-[360px]"
+                                                className="font-semibold text-indigo-600 text-left truncate max-w-[220px] sm:max-w-[360px]"
                                                 title={
                                                     uniqueCode || "Loading..."
                                                 }
@@ -262,10 +270,12 @@ const Profile = () => {
                         </div>
                     </div>
 
+                    {/* Divider */}
                     <div className="border-t border-gray-200 my-6" />
 
+                    {/* Sezione prenotazioni */}
                     <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                             Your Reservations
                         </h3>
                         {loading ? (
@@ -283,9 +293,9 @@ const Profile = () => {
                                 {reservations.map((r) => (
                                     <li
                                         key={r.id}
-                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-row justify-between items-center"
+                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-center gap-4"
                                     >
-                                        <div>
+                                        <div className="w-full text-sm sm:text-base">
                                             <p className="text-gray-700">
                                                 <strong>Parking Spot:</strong>{" "}
                                                 {r.Parking.name}
@@ -326,7 +336,7 @@ const Profile = () => {
                                                 onClick={handleCancelReservation(
                                                     r.id
                                                 )}
-                                                className="cursor-pointer mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
+                                                className="cursor-pointer w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
                                             >
                                                 Cancel Reservation
                                             </button>
@@ -343,10 +353,10 @@ const Profile = () => {
                 </p>
             )}
 
-            {/* Modale per edit profile */}
+            {/* Modale */}
             {editModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-lg max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
                         <form
                             onSubmit={handleUpdateProfile}

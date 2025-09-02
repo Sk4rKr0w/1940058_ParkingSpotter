@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { useNavigate } from "react-router-dom";
 import MapComponent from "../components/MapComponent";
 
 const Reservation = () => {
@@ -18,6 +19,7 @@ const Reservation = () => {
     const [isBooking, setIsBooking] = useState(false);
     const [bookingMessage, setBookingMessage] = useState("");
     const [validationError, setValidationError] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Animazione titolo e paragrafo
@@ -128,6 +130,8 @@ const Reservation = () => {
 
             setBookingMessage("Prenotazione completata con successo!");
             setShowForm(false);
+            alert("Prenotazione effettuata con successo!");
+            navigate("/profile");
         } catch (error) {
             console.error(error);
             setBookingMessage(
