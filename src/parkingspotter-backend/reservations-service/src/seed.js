@@ -1,8 +1,29 @@
-const { Parking } = require("./models");
+const { User, Parking } = require("./models");
+const bcrypt = require("bcrypt");
 
 types = ['uncovered', 'covered', 'underground', 'multi-storey'];
 
-async function seedParkings() {
+async function seed() {
+  let operator = await User.findOne({ where: { email: "prova@prova.it" } });
+
+  if (!operator) {
+    const hashed = await bcrypt.hash("test12345", 10);
+
+    operator = await User.create({
+      name: "User",
+      surname: "Di Prova",
+      email: "prova@prova.it",
+      password: hashed,
+      role: "operator",
+      uniqueCode:
+        "209c536855acc31c37d56bbaead558a5638f70da682ead9984a7e6ed50f901c9a63bcc388e086ad77b0e5f7e5bb81b4f53024cfe662a7d50141d3dc9c2561319",
+    });
+
+    console.log("Operator user created:", operator.email);
+  } else {
+    console.log("Operator user already exists:", operator.email);
+  }
+
   const count = await Parking.count();
   if (count > 0) {
     console.log("Parkings already seeded.");
@@ -27,7 +48,6 @@ async function seedParkings() {
   for (let i = 0; i < 50; i++) {
     const city = cities[i % cities.length];
 
-    // small random offsets (~0.05°) so all parkings aren’t on the exact same point
     const latOffset = (Math.random() - 0.5) * 0.1;
     const lonOffset = (Math.random() - 0.5) * 0.1;
 
@@ -38,7 +58,8 @@ async function seedParkings() {
       totalSpots: Math.floor(Math.random() * 200) + 50,
       occupiedSpots: 0,
       hourlyPrice: Math.floor(Math.random() * 10 + 1),
-      type: types[Math.floor(Math.random() * 4)]
+      type: types[Math.floor(Math.random() * types.length)],
+      operatorId: operator.id
     });
   }
 
@@ -46,4 +67,4 @@ async function seedParkings() {
   console.log("Seeded 50 parking lots in Italy");
 }
 
-module.exports = { seedParkings };
+module.exports = { seed };

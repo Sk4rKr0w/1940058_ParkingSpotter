@@ -29,6 +29,9 @@ Reservation.belongsTo(User, { foreignKey: 'userId' });
 Parking.hasMany(Reservation, { foreignKey: "parkingId" });
 Reservation.belongsTo(Parking, { foreignKey: "parkingId" });
 
+User.hasMany(Parking, { foreignKey: "operatorId" });
+Parking.belongsTo(User, { foreignKey: "operatorId" });
+
 module.exports = {
   sequelize,
   User,
