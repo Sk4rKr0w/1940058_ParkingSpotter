@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
     status: { type: DataTypes.ENUM('active', 'cancelled', 'completed'), defaultValue: 'active' },
     parkingId: {
       type: DataTypes.INTEGER,
-      allowNull: false,  // each reservation must belong to a parking
+      allowNull: false
     }
   });
 
