@@ -46,4 +46,31 @@ router.get('/', authenticate, async (req, res) => {
   res.json(reservations);
 });
 
+// Get active reservations for a parking
+router.get('/active/:parkingId', async (req, res) => {
+  const { parkingId } = req.params;
+  const now = new Date();
+
+  try {
+    const reservations = await Reservation.findAll({
+      where: {
+        parkingId,
+        status: 'active',
+        startTime: { [Op.lte]: now },
+        endTime: { [Op.gte]: now }
+      }
+    });
+
+    res.json({
+      parkingId,
+      reservedSpots: reservations.length,
+      reservations
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch reservations' });
+  }
+});
+
+
 module.exports = router;

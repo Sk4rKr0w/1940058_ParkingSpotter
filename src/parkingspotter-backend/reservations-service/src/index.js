@@ -7,7 +7,7 @@ const { sequelize } = require('./models');
 const reservationsRoutes = require('./routes/reservations');
 const parkingsRoutes = require('./routes/parking');
 
-const { seedParkings } = require("./seed");
+const { seed } = require("./seed");
 
 const app = express();
 app.use(cors());
@@ -25,7 +25,7 @@ async function start() {
     // Create tables if they don't exist
     await sequelize.sync({ alter: true });
 
-    await seedParkings();
+    await seed();
 
     app.listen(PORT, () => {
       console.log(`Reservations service running on port ${PORT}`);
