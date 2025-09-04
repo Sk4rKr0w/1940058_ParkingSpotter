@@ -7,8 +7,6 @@ async function start() {
   try {
     await sequelize.authenticate();
     console.log('Database connected.');
-    // Create tables if they don't exist
-    await sequelize.sync({ alter: true });
 
     const opt = {credentials: require('amqplib').credentials.plain(process.env.RABBITMQ_DEFAULT_USER, process.env.RABBITMQ_DEFAULT_PASS)};
     const connection = await amqp.connect("amqp://rabbitmq", opt);
