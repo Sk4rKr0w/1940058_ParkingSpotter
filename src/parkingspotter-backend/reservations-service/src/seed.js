@@ -24,6 +24,8 @@ async function seed() {
     console.log("Operator user already exists:", operator.email);
   }
 
+  operator = await User.findOne({ where: { email: "prova@prova.it" } });
+
   const count = await Parking.count();
   if (count > 0) {
     console.log("Parkings already seeded.");
