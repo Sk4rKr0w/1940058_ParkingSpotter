@@ -4,19 +4,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const { sequelize } = require('./models');
-const reservationsRoutes = require('./routes/reservations');
-const parkingsRoutes = require('./routes/parking');
-
-const { seed } = require("./seed");
+const ticketRoutes = require('./routes/ticket');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/reservations', reservationsRoutes);
-app.use('/parkings', parkingsRoutes);
+app.use('/tickets', ticketRoutes);
 
-const PORT = process.env.PORT || 4002;
+const PORT = process.env.PORT || 4003;
 
 async function start() {
   try {
@@ -24,11 +20,8 @@ async function start() {
     console.log('Database connected.');
     // Create tables if they don't exist
     await sequelize.sync({ alter: true });
-
-    await seed();
-
     app.listen(PORT, () => {
-      console.log(`Reservations service running on port ${PORT}`);
+      console.log(`Assistance tickets service running on port ${PORT}`);
     });
   } catch (err) {
     console.error('Unable to start server:', err);

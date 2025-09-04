@@ -35,6 +35,14 @@ module.exports = (sequelize) => {
     type: {
       type: DataTypes.ENUM('uncovered', 'covered', 'underground', 'multi-storey'),
       defaultValue: 'uncovered'
+    },
+    operatorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id"
+      }
     }
   });
   return Parking;

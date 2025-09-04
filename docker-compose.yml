@@ -21,6 +21,17 @@ services:
     networks:
       - usp-net
 
+  tickets-service:
+    build: ./src/parkingspotter-backend/tickets-service
+    env_file: ./src/parkingspotter-backend/tickets-service/.env
+    ports:
+      - "4003:4003"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
   ingestion-service:
     build: ./src/parkingspotter-backend/ingestion-service
     env_file: ./src/parkingspotter-backend/ingestion-service/.env
