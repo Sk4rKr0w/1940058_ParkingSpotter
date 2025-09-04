@@ -38,11 +38,7 @@ module.exports = (sequelize) => {
     },
     operatorId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id"
-      }
+      allowNull: false
     }
   });
   return Parking;
