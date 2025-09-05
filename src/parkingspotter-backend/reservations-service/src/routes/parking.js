@@ -43,15 +43,32 @@ router.get("/list", authenticate, authorize(["operator"]), async (req, res) => {
   }
 });
 
-// Edit parking only if owned by operator
-router.post("/:id", authenticate, authorize(["operator"]), async (req, res) => {
+// Get latest n parkings being admin
+router.get("/list/admin", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+
+    const parkings = await Parking.findAll({
+      order: [["createdAt", "DESC"]],
+      limit,
+    });
+
+    res.json(parkings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Edit parking only if owned by operator or being an admin
+router.post("/:id", authenticate, authorize(["operator", "admin"]), async (req, res) => {
   try {
     const { id } = req.params;
     const { name, latitude, longitude, totalSpots, hourlyPrice, type } = req.body;
 
     const parking = await Parking.findByPk(id);
     if (!parking) return res.status(404).json({ error: "Parking not found" });
-    if (parking.operatorId !== req.user.id) {
+    if (parking.operatorId !== req.user.id && req.user.role != "admin") {
       return res.status(403).json({ error: "You are not the owner of this parking" });
     }
 
@@ -63,14 +80,14 @@ router.post("/:id", authenticate, authorize(["operator"]), async (req, res) => {
   }
 });
 
-// View parking statistics
-router.get("/:id/stats", authenticate, authorize(["operator"]), async (req, res) => {
+// View parking statistics if owned by operator or being an admin
+router.get("/:id/stats", authenticate, authorize(["operator", "admin"]), async (req, res) => {
   try {
     const { id } = req.params;
     const parking = await Parking.findByPk(id, { include: [Reservation] });
 
     if (!parking) return res.status(404).json({ error: "Parking not found" });
-    if (req.user.role === "operator" && parking.operatorId !== req.user.id) {
+    if (parking.operatorId !== req.user.id && req.user.role != "admin") {
       return res.status(403).json({ error: "You are not the owner of this parking" });
     }
 
