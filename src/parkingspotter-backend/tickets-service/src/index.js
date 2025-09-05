@@ -1,11 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const { sequelize } = require('./models');
 const ticketRoutes = require('./routes/ticket');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/tickets', ticketRoutes);

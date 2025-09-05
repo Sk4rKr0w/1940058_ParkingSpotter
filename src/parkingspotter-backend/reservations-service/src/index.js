@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const { sequelize } = require('./models');
 const reservationsRoutes = require('./routes/reservations');
@@ -9,6 +10,7 @@ const parkingsRoutes = require('./routes/parking');
 const { seed } = require("./seed");
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/reservations', reservationsRoutes);
