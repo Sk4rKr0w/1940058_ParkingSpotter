@@ -4,6 +4,24 @@ const bcrypt = require("bcrypt");
 types = ['uncovered', 'covered', 'underground', 'multi-storey'];
 
 async function seed() {
+  let admin = await User.findOne({ where: { email: "admin@admin.it" } });
+
+  if (!admin) {
+    const hashed = await bcrypt.hash("test12345", 10);
+
+    admin = await User.create({
+      name: "Admin",
+      surname: "Di Prova",
+      email: "admin@admin.it",
+      password: hashed,
+      role: "admin"
+    });
+
+    console.log("Admin user created:", admin.email);
+  } else {
+    console.log("Admin user already exists:", admin.email);
+  }
+
   let operator = await User.findOne({ where: { email: "prova@prova.it" } });
 
   if (!operator) {
