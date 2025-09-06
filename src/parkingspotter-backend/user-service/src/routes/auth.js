@@ -80,4 +80,16 @@ router.post('/user', authenticate, async (req, res) => {
   }
 });
 
+// Get total user count
+router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const totalCount = await User.count();
+
+    res.json({ totalUsers: totalCount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
