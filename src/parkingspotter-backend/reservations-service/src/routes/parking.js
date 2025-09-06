@@ -1,5 +1,5 @@
 const express = require("express");
-const { Parking } = require("../models");
+const { Parking, Reservation } = require("../models");
 const { getDistanceFromLatLonInKm } = require("../utils/parking");
 const { authenticate, authorize } = require("../middleware/auth");
 

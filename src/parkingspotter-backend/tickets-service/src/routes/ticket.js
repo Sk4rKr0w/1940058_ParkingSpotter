@@ -40,7 +40,7 @@ router.get("/", authenticate, authorize(["admin"]), async (req, res) => {
 });
 
 // Get total and today tickets count
-router.get("/stats", async (req, res) => {
+router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
   try {
     const totalCount = await Ticket.count();
 
