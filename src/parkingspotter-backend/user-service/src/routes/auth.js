@@ -92,4 +92,35 @@ router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
   }
 });
 
+// Get latest n users
+router.get("/list", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 3;
+
+    const users = await User.findAll({
+      attributes: ["name", "surname", "createdAt"],
+      order: [["createdAt", "DESC"]],
+      limit,
+    });
+
+    const formattedUsers = users.map((user) => {
+      const date = new Date(user.createdAt);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return {
+        name: user.name,
+        surname: user.surname,
+        registrationDate: `${day}/${month}/${year}`,
+      };
+    });
+
+    res.json(formattedUsers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
