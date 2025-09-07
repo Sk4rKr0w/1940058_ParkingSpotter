@@ -195,9 +195,8 @@ const Profile = () => {
                             <p className="text-gray-600 text-sm">
                                 Role:{" "}
                                 <span className="font-semibold text-indigo-600">
-                                    {user.role === "driver"
-                                        ? "Driver"
-                                        : "Parking Owner"}
+                                    {user.role.charAt(0).toUpperCase() +
+                                        user.role.slice(1)}
                                 </span>
                             </p>
                             <p className="text-gray-500 text-xs">
@@ -214,11 +213,7 @@ const Profile = () => {
                 hover:from-orange-500 hover:to-orange-600
                 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-sm font-semibold
                 shadow-md transform transition-all duration-300 hover:scale-105
-                ${
-                    user.role === "operator" || user.role === "admin"
-                        ? ""
-                        : "md:col-span-2"
-                }`}
+                ${user.role === "operator" ? "" : "md:col-span-2"}`}
                             >
                                 Make your own reservation!
                             </NavLink>
@@ -239,8 +234,7 @@ const Profile = () => {
                                 Edit Profile
                             </button>
 
-                            {(user.role === "operator" ||
-                                user.role === "admin") && (
+                            {user.role === "operator" && (
                                 <div className="w-full flex flex-col md:col-span-2 justify-center p-3 sm:p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition-all hover:shadow-lg">
                                     <div className="text-gray-700 text-sm text-left">
                                         <span className="font-medium">
