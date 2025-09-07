@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const { User } = require('../models');
+const { User, Reservation } = require('../models');
 
 const { generateUniqueCode } = require('../utils/uniqueCode')
 const { authenticate, authorize } = require('../middleware/auth');
@@ -98,21 +98,28 @@ router.get("/list", authenticate, authorize(["admin"]), async (req, res) => {
     const limit = parseInt(req.query.limit) || 3;
 
     const users = await User.findAll({
-      attributes: ["name", "surname", "createdAt"],
+      attributes: ["id", "name", "surname", "createdAt", "role", "email"],
       order: [["createdAt", "DESC"]],
       limit,
     });
 
-    const formattedUsers = users.map((user) => {
+    const formattedUsers = users.map(async (user) => {
       const date = new Date(user.createdAt);
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = date.getFullYear();
 
+      const reservationsCount = await Reservation.count({
+        where: { userId: user.id }
+      });
+
       return {
         name: user.name,
         surname: user.surname,
+        email: user.email,
+        role: user.role,
         registrationDate: `${day}/${month}/${year}`,
+        reservationsCount: reservationsCount
       };
     });
 
