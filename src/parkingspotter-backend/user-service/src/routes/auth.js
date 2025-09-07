@@ -92,4 +92,22 @@ router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
   }
 });
 
+// Get latest n users
+router.get("/list", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 3;
+
+    const users = await User.findAll({
+      attributes: ["name", "surname", "createdAt"],
+      order: [["createdAt", "DESC"]],
+      limit,
+    });
+
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
