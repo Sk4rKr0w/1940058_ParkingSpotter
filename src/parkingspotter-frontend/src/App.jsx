@@ -1,6 +1,11 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { UserProvider } from "./utils/UserContext";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from "react-router-dom";
+import { UserProvider, useUser } from "./utils/UserContext";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Footer from "./components/Footer";
@@ -12,24 +17,91 @@ import Profile from "./pages/Profile";
 import Reservation from "./pages/Reservation";
 import ManageSpots from "./pages/ManageSpots";
 import AddSpot from "./pages/AddSpot";
+import Admin from "./pages/Admin";
+import Unauthorized from "./pages/Unauthorized";
+
+function ProtectedRoute({ children, allowedRoles }) {
+    const { user } = useUser();
+
+    // Caso 1: utente non loggato → vai al login
+    if (!user || !user.role) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // Caso 2: ruolo non consentito → pagina Unauthorized
+    if (!allowedRoles.includes(user.role)) {
+        return <Navigate to="/unauthorized" replace />;
+    }
+
+    // Caso 3: ruolo corretto → mostra contenuto
+    return children;
+}
 
 function App() {
     return (
         <Router>
             <UserProvider>
-                {" "}
-                {/* Wrappa tutto con UserProvider */}
                 <Navbar />
                 <Routes>
+                    {/* Rotte pubbliche */}
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/reservation" element={<Reservation />} />
-                    <Route path="/manage-spots" element={<ManageSpots />} />
-                    <Route path="/add-spot" element={<AddSpot />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
+
+                    {/* Rotte per tutti gli utenti loggati (Driver, Operator, Admin) */}
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoute
+                                allowedRoles={["driver", "operator", "admin"]}
+                            >
+                                <Profile />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Rotte per Driver */}
+                    <Route
+                        path="/reservation"
+                        element={
+                            <ProtectedRoute
+                                allowedRoles={["driver", "operator", "admin"]}
+                            >
+                                <Reservation />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Rotte per Operator */}
+                    <Route
+                        path="/manage-spots"
+                        element={
+                            <ProtectedRoute allowedRoles={["operator"]}>
+                                <ManageSpots />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/add-spot"
+                        element={
+                            <ProtectedRoute allowedRoles={["operator"]}>
+                                <AddSpot />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Esempio rotta Admin */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute allowedRoles={["admin"]}>
+                                <Admin />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
                 <Footer />
             </UserProvider>
