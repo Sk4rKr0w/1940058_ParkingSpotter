@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 const { generateUniqueCode } = require('../utils/uniqueCode')
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -77,6 +77,18 @@ router.post('/user', authenticate, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
+// Get total user count
+router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const totalCount = await User.count();
+
+    res.json({ totalUsers: totalCount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

@@ -2,8 +2,9 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { Reservation, Parking } = require('../models');
 const { sendNotification } = require('../utils/notifications');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 const router = express.Router();
+const { Op } = require("sequelize");
 
 // Create reservation
 router.post('/', authenticate, async (req, res) => {
@@ -69,6 +70,30 @@ router.get('/active/:parkingId', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch reservations' });
+  }
+});
+
+// Get today's reservation count
+router.get("/stats/today", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const count = await Reservation.count({
+      where: {
+        createdAt: {
+          [Op.between]: [startOfDay, endOfDay]
+        }
+      }
+    });
+
+    res.json({ date: startOfDay.toISOString().split("T")[0], reservations: count });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

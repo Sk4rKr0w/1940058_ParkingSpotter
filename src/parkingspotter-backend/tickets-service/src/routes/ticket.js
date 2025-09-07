@@ -1,6 +1,7 @@
 const express = require("express");
 const { Ticket } = require("../models");
 const { authenticate, authorize } = require("../middleware/auth");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -32,6 +33,32 @@ router.get("/", authenticate, authorize(["admin"]), async (req, res) => {
     });
 
     res.json(tickets);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get total and today tickets count
+router.get("/stats", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const totalCount = await Ticket.count();
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const todayCount = await Ticket.count({
+      where: {
+        createdAt: {
+          [Op.between]: [startOfDay, endOfDay]
+        }
+      }
+    });
+
+    res.json({ totalTickets: totalCount, todayTickets: todayCount });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
