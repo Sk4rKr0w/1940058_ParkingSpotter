@@ -103,7 +103,20 @@ router.get("/list", authenticate, authorize(["admin"]), async (req, res) => {
       limit,
     });
 
-    res.json(users);
+    const formattedUsers = users.map((user) => {
+      const date = new Date(user.createdAt);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return {
+        name: user.name,
+        surname: user.surname,
+        registrationDate: `${day}/${month}/${year}`,
+      };
+    });
+
+    res.json(formattedUsers);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
