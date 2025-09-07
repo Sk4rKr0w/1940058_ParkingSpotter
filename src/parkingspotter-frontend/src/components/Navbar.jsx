@@ -99,6 +99,17 @@ const Navbar = () => {
                                     >
                                         Go to your profile
                                     </button>
+                                    {user.role === "admin" && (
+                                        <button
+                                            onClick={() => {
+                                                navigate("/admin");
+                                                setDropdownOpen(false);
+                                            }}
+                                            className="cursor-pointer block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                                        >
+                                            Admin Dashboard
+                                        </button>
+                                    )}
                                     <button
                                         onClick={handleLogout}
                                         className="cursor-pointer block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-700"

@@ -1,8 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const Contact = () => {
     const containerRef = useRef(null);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        message: "",
+    });
+    const [loading, setLoading] = useState(false);
+    const [feedback, setFeedback] = useState(null);
 
     useEffect(() => {
         if (containerRef.current) {
@@ -13,6 +20,40 @@ const Contact = () => {
             );
         }
     }, []);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setFeedback(null);
+
+        try {
+            const res = await fetch("http://localhost:4003/tickets", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Something went wrong");
+            }
+
+            setFeedback({
+                type: "success",
+                message: "Message sent successfully!",
+            });
+            setFormData({ name: "", email: "", message: "" });
+        } catch (err) {
+            setFeedback({ type: "error", message: err.message });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="relative flex justify-center min-h-screen items-start bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4 py-8">
@@ -26,7 +67,10 @@ const Contact = () => {
                     Contact Us
                 </h2>
 
-                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form
+                    onSubmit={handleSubmit}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
                     {/* Name */}
                     <div className="flex flex-col gap-y-3">
                         <label
@@ -39,6 +83,8 @@ const Contact = () => {
                             type="text"
                             id="name"
                             name="name"
+                            value={formData.name}
+                            onChange={handleChange}
                             placeholder="Your name"
                             className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
@@ -57,6 +103,8 @@ const Contact = () => {
                             type="email"
                             id="email"
                             name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="your@email.com"
                             className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
                             required
@@ -74,6 +122,8 @@ const Contact = () => {
                         <textarea
                             id="message"
                             name="message"
+                            value={formData.message}
+                            onChange={handleChange}
                             rows={5}
                             placeholder="Your message..."
                             className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition max-h-48"
@@ -81,12 +131,26 @@ const Contact = () => {
                         ></textarea>
                     </div>
 
+                    {/* Feedback */}
+                    {feedback && (
+                        <div
+                            className={`md:col-span-2 text-center font-medium ${
+                                feedback.type === "success"
+                                    ? "text-green-400"
+                                    : "text-red-400"
+                            }`}
+                        >
+                            {feedback.message}
+                        </div>
+                    )}
+
                     {/* Button */}
                     <button
                         type="submit"
-                        className="md:col-span-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                        disabled={loading}
+                        className="md:col-span-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Send Message
+                        {loading ? "Sending..." : "Send Message"}
                     </button>
                 </form>
             </div>

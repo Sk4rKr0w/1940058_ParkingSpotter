@@ -32,7 +32,11 @@ const Login = () => {
             } else {
                 localStorage.setItem("token", data.token);
                 login(data.user);
-                navigate("/profile");
+                // if user.role is admin, redirect to /admin else to /profile
+                if (data.user.role === "admin") navigate("/admin");
+                else if (data.user.role === "operator")
+                    navigate("/manage-spots");
+                else navigate("/profile");
             }
         } catch (err) {
             setError("Errore di connessione al server");
