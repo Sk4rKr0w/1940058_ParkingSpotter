@@ -103,25 +103,27 @@ router.get("/list", authenticate, authorize(["admin"]), async (req, res) => {
       limit,
     });
 
-    const formattedUsers = users.map(async (user) => {
-      const date = new Date(user.createdAt);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
+    const formattedUsers = await Promise.all(
+      users.map(async (user) => {
+        const date = new Date(user.createdAt);
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
 
-      const reservationsCount = await Reservation.count({
-        where: { userId: user.id }
-      });
+        const reservationsCount = await Reservation.count({
+          where: { userId: user.id }
+        });
 
-      return {
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        role: user.role,
-        registrationDate: `${day}/${month}/${year}`,
-        reservationsCount: reservationsCount
-      };
-    });
+        return {
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          role: user.role,
+          registrationDate: `${day}/${month}/${year}`,
+          reservationsCount: reservationsCount
+        };
+      })
+    );
 
     res.json(formattedUsers);
   } catch (err) {
