@@ -1,5 +1,5 @@
 const express = require("express");
-const { Parking, Reservation } = require("../models");
+const { Parking, Reservation, User } = require("../models");
 const { getDistanceFromLatLonInKm } = require("../utils/parking");
 const { authenticate, authorize } = require("../middleware/auth");
 
@@ -54,6 +54,36 @@ router.get("/list/admin", authenticate, authorize(["admin"]), async (req, res) =
     });
 
     res.json(parkings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Search parkings by operator email being admin
+router.get("/list/admin/search", authenticate, authorize(["admin"]), async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const parkings = await Parking.findAll({ where: { operatorId: user.id } });
+
+    res.json({
+      operator: {
+        id: user.id,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+      },
+      parkings,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
