@@ -52,25 +52,23 @@ async function seed() {
     return;
   }
 
-  const rome = { name: "Rome", lat: 41.9028, lon: 12.4964 };
-
   const sampleParkings = [
     {
-      id: 0,
+      id: 1,
       name: "Roma Centro Storico",
-      latitude: rome.lat + 0.01,
-      longitude: rome.lon - 0.01,
-      totalSpots: 120,
+      latitude: 41.90927529111484,
+      longitude: 12.492593061936542,
+      totalSpots: 30,
       occupiedSpots: 0,
       hourlyPrice: 5,
       type: "underground",
       operatorId: operator.id,
     },
     {
-      id: 1,
+      id: 2,
       name: "Roma Stazione Termini",
-      latitude: rome.lat - 0.02,
-      longitude: rome.lon + 0.02,
+      latitude: 41.89855921052377,
+      longitude: 12.5018964426665,
       totalSpots: 200,
       occupiedSpots: 0,
       hourlyPrice: 4,
@@ -78,10 +76,10 @@ async function seed() {
       operatorId: operator.id,
     },
     {
-      id: 2,
+      id: 3,
       name: "Roma EUR",
-      latitude: rome.lat - 0.05,
-      longitude: rome.lon + 0.05,
+      latitude: 41.829846312259924,
+      longitude: 12.47472614873045,
       totalSpots: 150,
       occupiedSpots: 0,
       hourlyPrice: 3,
