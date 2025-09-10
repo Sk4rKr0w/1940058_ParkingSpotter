@@ -83,7 +83,7 @@ def on_reservation_event(ch, method, properties, body):
         reservations.setdefault(parking_id, []).append(event)
         if availablePlaces > 0:
             availablePlaces -= 1
-    elif event_type in ["cancelled", "completed"]:
+    elif event_type in ["cancelled", "expired"]:
         reservations[parking_id] = [
             r for r in reservations.get(parking_id, []) 
             if r["reservationId"] != event["reservationId"]

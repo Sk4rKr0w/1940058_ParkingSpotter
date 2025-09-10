@@ -8,7 +8,6 @@ const reservationsRoutes = require('./routes/reservations');
 const parkingsRoutes = require('./routes/parking');
 
 const { seed } = require("./seed");
-const { startReservationsChecker } = require("./utils/reservationsChecker");
 
 const app = express();
 app.use(cors());
@@ -30,7 +29,6 @@ async function start() {
 
     app.listen(PORT, () => {
       console.log(`Reservations service running on port ${PORT}`);
-      startReservationsChecker();
     });
   } catch (err) {
     console.error('Unable to start server:', err);
