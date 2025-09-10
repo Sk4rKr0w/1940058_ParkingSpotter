@@ -12,6 +12,8 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     env_file: .env
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
     ports:
       - "5675:5672"
       - "15675:15672"
@@ -35,6 +37,7 @@ services:
 
 volumes:
   pgdata:
+  rabbitmqdata:
 
 networks:
   usp-net:
