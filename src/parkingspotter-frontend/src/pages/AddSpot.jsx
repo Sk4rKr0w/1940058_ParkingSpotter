@@ -70,6 +70,8 @@ const AddSpot = () => {
                     totalSpots: parseInt(formData.totalSpots) || 0,
                     hourlyPrice: parseFloat(formData.hourlyPrice) || 0,
                     type: formData.type || "uncovered",
+                    city: formData.city,
+                    address: formData.street,
                 }),
             });
 

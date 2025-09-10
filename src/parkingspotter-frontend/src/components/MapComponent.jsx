@@ -67,6 +67,7 @@ export default function MapComponent({
     const [mapZoom, setMapZoom] = useState(6);
     const [isLoading, setIsLoading] = useState(false);
     const [searchMessage, setSearchMessage] = useState("");
+    const [radius, setRadius] = useState(5);
 
     const handleSearch = async (q) => {
         const searchTerm = q || query;
@@ -151,6 +152,23 @@ export default function MapComponent({
                             >
                                 {isLoading ? "Cercando..." : "Cerca"}
                             </button>
+                        </div>
+
+                        {/* 🔹 Slider per il raggio */}
+                        <div className="flex flex-col gap-2 mb-3">
+                            <label className="font-medium text-sm">
+                                Raggio di ricerca: {radius} km
+                            </label>
+                            <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={radius}
+                                onChange={(e) =>
+                                    setRadius(Number(e.target.value))
+                                }
+                                className="w-full"
+                            />
                         </div>
 
                         {searchMessage && (
