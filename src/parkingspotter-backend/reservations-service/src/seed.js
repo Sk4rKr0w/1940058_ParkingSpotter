@@ -96,7 +96,7 @@ async function seed() {
 
   await Parking.bulkCreate(sampleParkings);
 
-  await sequelize.query(
+  await Parking.query(
     `SELECT setval('"Parkings_id_seq"', (SELECT MAX(id) FROM "Parkings"))`
   );
 
