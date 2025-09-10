@@ -19,6 +19,14 @@ module.exports = (sequelize) => {
       type: DataTypes.FLOAT,
       allowNull: false
     },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     totalSpots: {
       type: DataTypes.INTEGER,
       allowNull: false

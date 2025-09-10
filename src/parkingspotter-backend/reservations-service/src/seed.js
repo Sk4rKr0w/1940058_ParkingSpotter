@@ -58,6 +58,8 @@ async function seed() {
       name: "Roma Centro Storico",
       latitude: 41.90927529111484,
       longitude: 12.492593061936542,
+      city: 'Rome',
+      address: 'Via Abruzzi 11',
       totalSpots: 30,
       occupiedSpots: 0,
       hourlyPrice: 5,
@@ -69,6 +71,8 @@ async function seed() {
       name: "Roma Stazione Termini",
       latitude: 41.89855921052377,
       longitude: 12.5018964426665,
+      city: 'Rome',
+      address: 'Via Filippo Turati 52',
       totalSpots: 200,
       occupiedSpots: 0,
       hourlyPrice: 4,
@@ -80,6 +84,8 @@ async function seed() {
       name: "Roma EUR",
       latitude: 41.829846312259924,
       longitude: 12.47472614873045,
+      city: 'Rome',
+      address: "Via dell'Architettura",
       totalSpots: 150,
       occupiedSpots: 0,
       hourlyPrice: 3,
@@ -89,6 +95,11 @@ async function seed() {
   ];
 
   await Parking.bulkCreate(sampleParkings);
+
+  await sequelize.query(
+    `SELECT setval('"Parkings_id_seq"', (SELECT MAX(id) FROM "Parkings"))`
+  );
+
   console.log("Seeded 3 parking lots in Rome");
 }
 
