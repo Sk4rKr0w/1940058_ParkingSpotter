@@ -16,7 +16,10 @@ PARKING_MAX_PLACES = int(os.getenv("PARKING_MAX_PLACES", "10"))
 
 maxPlaces = PARKING_MAX_PLACES
 availablePlaces = PARKING_MAX_PLACES
-reservations = {}
+reservationsCount = 0
+
+def getMaxPlaces():
+    return maxPlaces - reservationsCount
 
 def create_connection():
     """Return a new RabbitMQ connection"""
@@ -71,7 +74,7 @@ def send_event(channel, event_type):
     print(f" [x] Sent {message}")
 
 def on_reservation_event(ch, method, properties, body):
-    global reservations, availablePlaces
+    global reservationsCount, availablePlaces
     event = json.loads(body)
     parking_id = event["parkingId"]
     event_type = event["type"]
@@ -80,18 +83,16 @@ def on_reservation_event(ch, method, properties, body):
         return
 
     if event_type == "created":
-        reservations.setdefault(parking_id, []).append(event)
+        reservationsCount += 1
         if availablePlaces > 0:
             availablePlaces -= 1
     elif event_type in ["cancelled", "expired"]:
-        reservations[parking_id] = [
-            r for r in reservations.get(parking_id, []) 
-            if r["reservationId"] != event["reservationId"]
-        ]
-        if availablePlaces < maxPlaces:
+        reservationsCount -= 1
+        if availablePlaces < getMaxPlaces():
             availablePlaces += 1
 
-    print(f"[x] Updated reservations for parking {parking_id}: {len(reservations[parking_id])}")
+    print(f"[x] Updated reservations for parking {parking_id}: {reservationsCount}")
+    print(f"Available places: {availablePlaces}/{maxPlaces}")
 
 def start_consumer(channel, queue_name):
     channel.basic_consume(queue=queue_name, on_message_callback=on_reservation_event, auto_ack=True)
@@ -106,10 +107,11 @@ def simulate(pub_channel):
             if event == "enter" and availablePlaces > 0:
                 availablePlaces -= 1
                 send_event(pub_channel, event)
-            elif event == "exit" and availablePlaces < maxPlaces:
+            elif event == "exit" and availablePlaces < getMaxPlaces():
                 availablePlaces += 1
                 send_event(pub_channel, event)
 
+            print(f"Active reservations: {reservationsCount}")
             print(f"Available places: {availablePlaces}/{maxPlaces}")
             time.sleep(random.randint(10, 20)) 
     except KeyboardInterrupt:

@@ -36,6 +36,8 @@ services:
     build: ./src/parkingspotter-backend/ingestion-service
     env_file: ./src/parkingspotter-backend/ingestion-service/.env
     restart: always
+    ports:
+      - "3000:3000"
     depends_on:
       - postgres
     networks:
@@ -98,9 +100,34 @@ services:
     networks:
       - usp-net
 
-  sensor-simulator:
+  sensor-simulator-centrostorico:
     build: ./src/parkingspotter-backend/sensorsimulator-service
     env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=1
+      - PARKING_MAX_PLACES=30
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
+  sensor-simulator-termini:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=2
+      - PARKING_MAX_PLACES=200
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
+  sensor-simulator-eur:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=3
+      - PARKING_MAX_PLACES=150
     depends_on:
       - rabbitmq
     networks:

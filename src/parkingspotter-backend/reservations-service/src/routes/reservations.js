@@ -5,7 +5,7 @@ const { sendNotification } = require('../utils/notifications');
 const { authenticate, authorize } = require('../middleware/auth');
 const router = express.Router();
 const { Op } = require("sequelize");
-
+const { notifyReservation } = require('../utils/reservationsToSensors');
 // Create reservation
 router.post('/', authenticate, async (req, res) => {
   try {
@@ -19,6 +19,11 @@ router.post('/', authenticate, async (req, res) => {
     });
 
     await sendNotification(req.user.id, `Your reservation for spot ${parkingId} is confirmed.`);
+    notifyReservation({
+      id: reservation.id,
+      parkingId: parkingId,
+      type: "created"
+    });
     res.json({ message: 'Reservation created', reservation });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -35,6 +40,11 @@ router.post('/:id/cancel', authenticate, async (req, res) => {
   await reservation.save();
 
   await sendNotification(req.user.id, `Your reservation for spot ${reservation.parkingId} was cancelled.`);
+  notifyReservation({
+    id: reservation.id,
+    parkingId: parkingId,
+    type: "cancelled"
+  });
   res.json({ message: 'Reservation cancelled', reservation });
 });
 
