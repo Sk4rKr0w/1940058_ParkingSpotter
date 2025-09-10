@@ -1,30 +1,56 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import * as jwtDecode from "jwt-decode";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                const decoded = jwtDecode.jwtDecode(token);
+                if (decoded.exp * 1000 > Date.now()) {
+                    setUser({
+                        id: decoded.userId,
+                        name: decoded.name,
+                        surname: decoded.surname,
+                        email: decoded.email,
+                        role: decoded.role,
+                    });
+                } else {
+                    console.warn("Token scaduto");
+                    localStorage.removeItem("token");
+                }
+            } catch (error) {
+                console.error("Errore decoding token:", error);
+                localStorage.removeItem("token");
+            }
         }
+        setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        localStorage.setItem("user", JSON.stringify(userData));
-        setUser(userData);
+    const login = (token) => {
+        localStorage.setItem("token", token);
+        const decoded = jwtDecode.jwtDecode(token);
+        setUser({
+            id: decoded.userId,
+            name: decoded.name,
+            surname: decoded.surname,
+            email: decoded.email,
+            role: decoded.role,
+        });
     };
 
     const logout = () => {
-        localStorage.removeItem("user");
         localStorage.removeItem("token");
         setUser(null);
     };
 
     return (
-        <UserContext.Provider value={{ user, login, logout }}>
+        <UserContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </UserContext.Provider>
     );
