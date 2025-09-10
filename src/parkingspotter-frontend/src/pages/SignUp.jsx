@@ -54,7 +54,7 @@ const Signup = () => {
         <div className="flex justify-center items-center min-h-screen bg-gray-900">
             <form
                 onSubmit={handleSubmit}
-                className="bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-md mx-2"
+                className="bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-xl mx-2"
             >
                 <h2 className="text-3xl font-bold text-orange-500 mb-6 text-center">
                     Sign Up
@@ -66,84 +66,85 @@ const Signup = () => {
                     </p>
                 )}
 
-                {/* Nome */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                    {/* Nome */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Cognome */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="surname"
-                        placeholder="Surname"
-                        value={formData.surname}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Cognome */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            name="surname"
+                            placeholder="Surname"
+                            value={formData.surname}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Email */}
-                <div className="mb-4">
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Email */}
+                    <div className="mb-4 md:col-span-2">
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full  px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Password */}
-                <div className="mb-4">
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Password */}
+                    <div className="mb-4">
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Conferma Password */}
-                <div className="mb-6">
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Conferma Password */}
+                    <div className="mb-6">
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            placeholder="Confirm Password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Ruolo */}
-                <div className="mb-4">
-                    <select
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    >
-                        <option value="driver">Driver</option>
-                        <option value="operator">Parking Owner</option>
-                    </select>
+                    {/* Ruolo */}
+                    <div className="mb-4 md:col-span-2">
+                        <select
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        >
+                            <option value="driver">Driver</option>
+                            <option value="operator">Parking Owner</option>
+                        </select>
+                    </div>
                 </div>
-
                 {/* Bottone */}
                 <button
                     type="submit"
@@ -156,6 +157,7 @@ const Signup = () => {
                 >
                     {loading ? "Loading..." : "Sign Up"}
                 </button>
+
                 <span className="text-gray-400 text-sm mt-4 block text-center">
                     Do you already have an account?{" "}
                     <NavLink

@@ -21,19 +21,18 @@ import Admin from "./pages/Admin";
 import Unauthorized from "./pages/Unauthorized";
 
 function ProtectedRoute({ children, allowedRoles }) {
-    const { user } = useUser();
+    const { user, loading } = useUser();
 
-    // Caso 1: utente non loggato → vai al login
+    if (loading) return <div className="text-center p-4">Loading...</div>;
+
     if (!user || !user.role) {
         return <Navigate to="/login" replace />;
     }
 
-    // Caso 2: ruolo non consentito → pagina Unauthorized
     if (!allowedRoles.includes(user.role)) {
         return <Navigate to="/unauthorized" replace />;
     }
 
-    // Caso 3: ruolo corretto → mostra contenuto
     return children;
 }
 

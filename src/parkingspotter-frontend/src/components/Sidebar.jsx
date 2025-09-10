@@ -26,7 +26,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
     return (
         <div
-            className={`fixed top-0 right-0 h-screen w-72 bg-black/90 backdrop-blur-md z-20 transition-transform duration-300 transform ${
+            className={`fixed top-0 right-0 overflow-y-scroll h-screen w-72 bg-black/90 backdrop-blur-md z-20 transition-transform duration-300 transform ${
                 isOpen ? "translate-x-0" : "translate-x-full"
             } shadow-lg`}
         >
@@ -57,7 +57,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                 logout();
                                 toggleSidebar(); // chiudi la sidebar dopo logout
                             }}
-                            className="w-full text-left py-2 px-4 rounded hover:bg-red-600 transition-colors"
+                            className="cursor-pointer w-full text-left py-2 px-4 rounded hover:bg-red-600 transition-colors"
                         >
                             Logout
                         </button>

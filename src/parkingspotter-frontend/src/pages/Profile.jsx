@@ -3,9 +3,10 @@ import axios from "axios";
 import gsap from "gsap";
 import { NavLink } from "react-router-dom";
 import ClipboardIcon from "../assets/clipboard.svg";
+import { useUser } from "../utils/UserContext";
 
 const Profile = () => {
-    const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
+    const { user } = useUser();
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -177,9 +178,7 @@ const Profile = () => {
                     {/* HEADER UTENTE */}
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-6">
                         {/* Avatar */}
-                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl sm:text-4xl font-semibold shadow-lg">
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
+                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl sm:text-4xl font-semibold shadow-lg"></div>
 
                         {/* Info */}
                         <div className="flex flex-col gap-2 text-center md:text-left">
@@ -313,8 +312,8 @@ const Profile = () => {
                                                         r.status === "active"
                                                             ? "text-green-600"
                                                             : r.status ===
-                                                              "completed"
-                                                            ? "text-gray-600"
+                                                              "expired"
+                                                            ? "text-yellow-600"
                                                             : "text-red-600"
                                                     }`}
                                                 >

@@ -156,6 +156,12 @@ const ManageSpots = () => {
                                         {p.name}
                                     </h2>
                                     <p className="text-gray-600 text-sm">
+                                        Address:{" "}
+                                        <span className="font-medium">
+                                            {p.address || "N/A"}
+                                        </span>
+                                    </p>
+                                    <p className="text-gray-600 text-sm">
                                         Type:{" "}
                                         <span className="font-medium">
                                             {p.type.charAt(0).toUpperCase() +
