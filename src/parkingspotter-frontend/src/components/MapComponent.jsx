@@ -5,7 +5,6 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Funzione per cercare coordinate di una città usando Nominatim
 async function geocodeCity(cityName) {
     try {
         const response = await fetch(
@@ -46,7 +45,6 @@ const createCustomIcon = (label, tipo) => {
     });
 };
 
-// Componente per centrare la mappa su una posizione
 function MapController({ center, zoom }) {
     const map = useMap();
 
@@ -59,30 +57,32 @@ function MapController({ center, zoom }) {
     return null;
 }
 
-export default function MapComponent({ onSelectParking }) {
-    const [searchQuery, setSearchQuery] = useState("");
+export default function MapComponent({
+    searchQuery: initialQuery,
+    onSelectParking,
+}) {
+    const [query, setQuery] = useState(initialQuery || ""); // ✅ Stato locale
     const [visibleMarkers, setVisibleMarkers] = useState([]);
     const [mapCenter, setMapCenter] = useState({ lat: 41.8719, lng: 12.5674 });
     const [mapZoom, setMapZoom] = useState(6);
     const [isLoading, setIsLoading] = useState(false);
     const [searchMessage, setSearchMessage] = useState("");
 
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) return;
+    const handleSearch = async (q) => {
+        const searchTerm = q || query;
+        if (!searchTerm.trim()) return;
 
         setIsLoading(true);
         setSearchMessage("");
 
-        // 1. Trova le coordinate della città
-        const coords = await geocodeCity(searchQuery);
+        const coords = await geocodeCity(searchTerm);
 
         if (coords) {
             setMapCenter({ lat: coords.lat, lng: coords.lng });
             setMapZoom(13);
 
             try {
-                // 2. Chiama l'API dei parcheggi vicini
-                const radius = 5; // Raggio in km
+                const radius = 5;
                 const res = await fetch(
                     `http://localhost:4002/parkings/nearby?lat=${coords.lat}&lon=${coords.lng}&radius=${radius}`
                 );
@@ -92,17 +92,15 @@ export default function MapComponent({ onSelectParking }) {
                 }
 
                 const data = await res.json();
-                console.log("Geocoding data:", data);
-
                 if (data.length > 0) {
                     setVisibleMarkers(data);
                     setSearchMessage(
-                        `Trovati ${data.length} parcheggi vicino a ${searchQuery}`
+                        `Trovati ${data.length} parcheggi vicino a ${searchTerm}`
                     );
                 } else {
                     setVisibleMarkers([]);
                     setSearchMessage(
-                        `Nessun parcheggio trovato vicino a ${searchQuery}`
+                        `Nessun parcheggio trovato vicino a ${searchTerm}`
                     );
                 }
             } catch (err) {
@@ -122,25 +120,32 @@ export default function MapComponent({ onSelectParking }) {
         }
     };
 
+    // ✅ Se arriva una query iniziale dalla Home, fai subito la ricerca
+    useEffect(() => {
+        if (initialQuery) {
+            setQuery(initialQuery);
+            handleSearch(initialQuery);
+        }
+    }, [initialQuery]);
+
     return (
         <div className="w-full max-w-6xl mx-auto p-4">
             <div className="flex flex-col md:flex-row gap-6 bg-white rounded-xl shadow-md p-4">
-                {/* Colonna sinistra (Search + Legend su desktop) */}
+                {/* Colonna sinistra */}
                 <div className="flex flex-col gap-4 md:w-1/3">
-                    {/* Barra di ricerca */}
                     <div className="bg-white p-4 rounded-xl shadow-md">
                         <div className="flex flex-col gap-3 mb-3">
                             <input
                                 type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                placeholder="Cerca una città (es: Roma, Milano, Bologna...)"
+                                placeholder="Cerca una città (es: Roma, Milano...)"
                                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                                 disabled={isLoading}
                             />
                             <button
-                                onClick={handleSearch}
+                                onClick={() => handleSearch()}
                                 disabled={isLoading}
                                 className="cursor-pointer px-5 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
                             >
@@ -155,7 +160,7 @@ export default function MapComponent({ onSelectParking }) {
                         )}
                     </div>
 
-                    {/* Legenda (desktop in colonna, mobile in fondo) */}
+                    {/* Legenda */}
                     <div className="bg-gray-50 p-4 rounded-xl shadow-inner border-b-1 border-b-gray-300 ">
                         <h4 className="font-semibold mb-3">Legenda:</h4>
                         <div className="flex flex-wrap gap-4 text-sm">
@@ -179,7 +184,7 @@ export default function MapComponent({ onSelectParking }) {
                     </div>
                 </div>
 
-                {/* Mappa (a destra su desktop, sotto su mobile) */}
+                {/* Mappa */}
                 <div className="md:flex-1 h-64 md:h-auto rounded-xl overflow-hidden shadow-md relative">
                     {isLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
@@ -208,10 +213,10 @@ export default function MapComponent({ onSelectParking }) {
                         {visibleMarkers.map((parking) => (
                             <Marker
                                 key={parking.id}
-                                position={[parking.latitude, parking.longitude]} // dati API
+                                position={[parking.latitude, parking.longitude]}
                                 icon={createCustomIcon(
-                                    parking.totalSpots, // numero posti
-                                    parking.tipo || "Scoperto" // se manca, metti default
+                                    parking.totalSpots,
+                                    parking.tipo || "Scoperto"
                                 )}
                             >
                                 <Popup>

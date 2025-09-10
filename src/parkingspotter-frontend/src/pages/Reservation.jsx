@@ -12,6 +12,7 @@ const Reservation = () => {
 
     const [showForm, setShowForm] = useState(false);
     const [selectedParking, setSelectedParking] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const [carPlate, setCarPlate] = useState("");
     const [startTime, setStartTime] = useState("");
@@ -53,6 +54,13 @@ const Reservation = () => {
             });
         }
     }, [showForm]);
+
+    useEffect(() => {
+        const savedQuery = localStorage.getItem("searchQuery");
+        if (savedQuery) {
+            setSearchQuery(savedQuery);
+        }
+    }, []);
 
     // ✅ Funzione di validazione date
     const validateDates = () => {
@@ -160,6 +168,7 @@ const Reservation = () => {
 
             <div className="mt-6" ref={containerRef}>
                 <MapComponent
+                    searchQuery={searchQuery}
                     onSelectParking={(parking) => {
                         setSelectedParking(parking);
                         setShowForm(true);
@@ -171,7 +180,7 @@ const Reservation = () => {
             {showForm && selectedParking && (
                 <div
                     ref={reservationRef}
-                    className="bg-white/90 rounded-xl shadow-xl p-6 mt-8 max-w-md mx-auto w-full flex flex-col gap-4"
+                    className="bg-white/90 rounded-xl shadow-xl p-6 mt-8 max-w-xl mx-auto w-full flex flex-col gap-4"
                 >
                     <h2 className="text-2xl font-bold text-gray-800 text-center">
                         Prenotazione

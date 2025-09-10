@@ -1,42 +1,56 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Info from "../components/Info";
+
 const Home = () => {
+    const navigate = useNavigate();
+    const [searchInput, setSearchInput] = useState("");
+
     const cardsData = [
         {
-            title: "I nostri obiettivi",
+            title: "Our goals",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
             src: "parkingLot.jpg",
         },
         {
-            title: "La nostra missione",
+            title: "Our mission",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
             src: "manWithPhone.png",
         },
         {
-            title: "La nostra visione",
+            title: "What we see for the future",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
             src: "parkingLot.jpg",
         },
     ];
 
     const socialData = [
-        {
-            link: "https://www.facebook.com",
-            icon: "socials/facebook_logo.svg",
-        },
-        {
-            link: "https://www.x.com",
-            icon: "socials/x_logo.svg",
-        },
+        { link: "https://www.facebook.com", icon: "socials/facebook_logo.svg" },
+        { link: "https://www.x.com", icon: "socials/x_logo.svg" },
         {
             link: "https://www.instagram.com",
             icon: "socials/instagram_logo.svg",
         },
-        {
-            link: "https://www.linkedin.com",
-            icon: "socials/linkedin_logo.svg",
-        },
+        { link: "https://www.linkedin.com", icon: "socials/linkedin_logo.svg" },
     ];
+
+    const handleSearch = () => {
+        const token = localStorage.getItem("token");
+
+        if (!searchInput.trim()) {
+            alert("Inserisci un testo per la ricerca!");
+            return;
+        }
+
+        if (token) {
+            // Salvo l'input in localStorage (o puoi passarlo come query param)
+            localStorage.setItem("searchQuery", searchInput);
+            navigate("/reservation");
+        } else {
+            navigate("/login");
+        }
+    };
 
     return (
         <div className="flex flex-col justify-center items-center bg-[#171717]">
@@ -56,12 +70,23 @@ const Home = () => {
                         Find your perfect parking spot with ease!
                     </p>
                 </div>
-                <div className="w-full flex flex-col justify-center items-center">
+
+                {/* Search Input */}
+                <div className="w-full flex flex-col md:flex-row justify-center items-center">
                     <input
                         type="text"
                         placeholder="Search for a parking spot"
-                        className="bg-white px-4 py-2 w-[70%] md:w-[40%] rounded-lg border italic"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                        className="bg-white px-4 py-2 w-[70%] md:w-[40%] rounded-lg md:rounded-none md:rounded-l-lg border border-gray-500 italic"
                     />
+                    <button
+                        onClick={handleSearch}
+                        className="w-[70%] md:w-auto mt-3 md:mt-0 bg-orange-600 text-white px-6 py-2 rounded-lg md:rounded-none md:rounded-r-lg hover:bg-orange-700 transition"
+                    >
+                        Search
+                    </button>
                 </div>
 
                 {/* Cards Section */}
