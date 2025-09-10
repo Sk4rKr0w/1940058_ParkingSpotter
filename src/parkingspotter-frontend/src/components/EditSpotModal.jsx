@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const EditSpotModal = ({ isOpen, onClose, parking, onSave }) => {
     const [formData, setFormData] = useState({
@@ -49,15 +49,20 @@ const EditSpotModal = ({ isOpen, onClose, parking, onSave }) => {
                         placeholder="Name"
                         required
                     />
-                    <input
-                        type="text"
+                    {/* Type Dropdown */}
+                    <select
                         name="type"
                         value={formData.type}
-                        onChange={handleChange}
-                        className="w-full p-3 border rounded"
-                        placeholder="Type"
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition bg-white"
                         required
-                    />
+                    >
+                        <option value="" disabled>
+                            Select Parking Type
+                        </option>
+                        <option value="uncovered">uncovered</option>
+                        <option value="multi-storey">multi-storey</option>
+                        <option value="covered">covered</option>
+                    </select>
                     <input
                         type="number"
                         name="totalSpots"
