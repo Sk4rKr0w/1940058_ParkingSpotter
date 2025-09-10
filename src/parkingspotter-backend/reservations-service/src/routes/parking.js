@@ -8,16 +8,18 @@ const router = express.Router();
 // Add a new parking
 router.post("/", authenticate, authorize(["operator"]), async (req, res) => {
   try {
-    const { name, latitude, longitude, totalSpots, hourlyPrice, type } = req.body;
+    const { name, latitude, longitude, totalSpots, hourlyPrice, type, city, address } = req.body;
 
-    if (!name || !latitude || !longitude || !totalSpots) {
-      return res.status(400).json({ error: "name, latitude, longitude and totalSpots are required" });
+    if (!name || !latitude || !longitude || !totalSpots || !city || !address) {
+      return res.status(400).json({ error: "name, latitude, longitude, city, address and totalSpots are required" });
     }
 
     const parking = await Parking.create({
       name,
       latitude,
       longitude,
+      city,
+      address,
       totalSpots,
       occupiedSpots: 0,
       hourlyPrice: hourlyPrice || 0,
