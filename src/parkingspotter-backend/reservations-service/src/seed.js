@@ -54,7 +54,6 @@ async function seed() {
 
   const sampleParkings = [
     {
-      id: 1,
       name: "Roma Centro Storico",
       latitude: 41.90927529111484,
       longitude: 12.492593061936542,
@@ -67,7 +66,6 @@ async function seed() {
       operatorId: operator.id,
     },
     {
-      id: 2,
       name: "Roma Stazione Termini",
       latitude: 41.89855921052377,
       longitude: 12.5018964426665,
@@ -80,7 +78,6 @@ async function seed() {
       operatorId: operator.id,
     },
     {
-      id: 3,
       name: "Roma EUR",
       latitude: 41.829846312259924,
       longitude: 12.47472614873045,
@@ -95,10 +92,6 @@ async function seed() {
   ];
 
   await Parking.bulkCreate(sampleParkings);
-
-  await Parking.query(
-    `SELECT setval('"Parkings_id_seq"', (SELECT MAX(id) FROM "Parkings"))`
-  );
 
   console.log("Seeded 3 parking lots in Rome");
 }
