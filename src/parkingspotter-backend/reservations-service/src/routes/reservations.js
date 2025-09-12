@@ -6,16 +6,38 @@ const { authenticate, authorize } = require('../middleware/auth');
 const router = express.Router();
 const { Op } = require("sequelize");
 const { notifyReservation } = require('../utils/reservationsToSensors');
+
+function roundToTwoDecimalPlaces(num) {
+    return Math.round(num * 100) / 100;
+}
+
 // Create reservation
 router.post('/', authenticate, async (req, res) => {
   try {
     const { parkingId, carPlate, startTime, endTime } = req.body;
+
+    const parking = await Parking.findByPk(parkingId);
+    if (!parking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
+
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    if (end <= start) {
+      return res.status(400).json({ error: "End time must be after start time" });
+    }
+
+    const durationHours = (end - start) / (1000 * 60 * 60); // ms to hours
+    const price = roundToTwoDecimalPlaces(durationHours * parking.hourlyPrice);
+
     const reservation = await Reservation.create({
       userId: req.user.id,
       parkingId,
       carPlate,
       startTime,
-      endTime
+      endTime,
+      price
     });
 
     await sendNotification(req.user.id, `Your reservation for spot ${parkingId} is confirmed.`);
@@ -42,7 +64,7 @@ router.post('/:id/cancel', authenticate, async (req, res) => {
   await sendNotification(req.user.id, `Your reservation for spot ${reservation.parkingId} was cancelled.`);
   notifyReservation({
     id: reservation.id,
-    parkingId: parkingId,
+    parkingId: reservation.parkingId,
     type: "cancelled"
   });
   res.json({ message: 'Reservation cancelled', reservation });

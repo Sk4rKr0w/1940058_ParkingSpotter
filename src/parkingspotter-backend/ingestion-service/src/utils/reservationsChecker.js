@@ -44,7 +44,9 @@ async function checkExpiredReservations(channel) {
       {
         where: {
           endTime: { [Op.lt]: now },
-          status: { [Op.ne]: "expired" }
+          status: {
+            [Op.notIn]: ["expired", "cancelled"]
+          }
         },
         returning: true
       }
