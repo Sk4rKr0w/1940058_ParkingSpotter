@@ -1,9 +1,9 @@
 import { useUser } from "../utils/UserContext";
-
+import { NavLink } from "react-router-dom";
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const { user, logout } = useUser(); // aggiungiamo logout dal context
+    const { user, logout } = useUser();
 
-    // Lista di link con controllo ruoli
+    // Link role-based
     const links = [
         { href: "/", label: "Home" },
         { href: "/about", label: "About" },
@@ -38,6 +38,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 ✖
             </button>
             <ul className="text-white mt-16 flex flex-col gap-4 p-6">
+                {user && (
+                    <NavLink
+                        to="/profile"
+                        className="flex justify-start items-center gap-x-2 lg:hidden cursor-pointer text-white font-medium px-6 py-2 bg-gradient-to-tr from-blue-400 to-blue-600 rounded-lg hover:bg-blue-300 transition"
+                    >
+                        <div className="w-12 h-12 bg-white text-blue-500 font-bold rounded-full flex justify-center items-center">
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        {user.name} {user.surname}
+                    </NavLink>
+                )}
                 {links.map((link) => (
                     <li key={link.href}>
                         <a
@@ -49,15 +60,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </li>
                 ))}
 
-                {/* Bottone logout gestito dal context */}
+                {/* Logout Button */}
                 {user && (
                     <li>
                         <button
                             onClick={() => {
                                 logout();
-                                toggleSidebar(); // chiudi la sidebar dopo logout
+                                toggleSidebar();
                             }}
-                            className="cursor-pointer w-full text-left py-2 px-4 rounded hover:bg-red-600 transition-colors"
+                            className="cursor-pointer w-full text-left py-2 px-4 rounded bg-red-500 hover:bg-red-600 transition-colors"
                         >
                             Logout
                         </button>

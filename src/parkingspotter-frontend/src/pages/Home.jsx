@@ -11,17 +11,35 @@ const Home = () => {
         {
             title: "Our goals",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
-            src: "parkingLot.jpg",
         },
         {
             title: "Our mission",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
-            src: "manWithPhone.png",
         },
         {
             title: "What we see for the future",
             text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem harum eum quasi ut repellat, esse quis accusamus expedita culpa voluptates, officia eligendi in aperiam quia.",
-            src: "parkingLot.jpg",
+        },
+    ];
+
+    const infoData = [
+        {
+            title: "Discover Nearby Parking Spots",
+            isReverted: false,
+            text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi error cupiditate tenetur itaque perferendis voluptatum soluta illo saepe magni, sed enim deserunt nulla culpa ullam?",
+            imgSrc: "../home/homeCard1.png",
+        },
+        {
+            title: "Easy Booking Process",
+            isReverted: true,
+            text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi error cupiditate tenetur itaque perferendis voluptatum soluta illo saepe magni, sed enim deserunt nulla culpa ullam?",
+            imgSrc: "../home/homeCard2.png",
+        },
+        {
+            title: "Secure Payments",
+            isReverted: false,
+            text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi error cupiditate tenetur itaque perferendis voluptatum soluta illo saepe magni, sed enim deserunt nulla culpa ullam?",
+            imgSrc: "../home/homeCard3.png",
         },
     ];
 
@@ -44,7 +62,7 @@ const Home = () => {
         }
 
         if (token) {
-            // Salvo l'input in localStorage (o puoi passarlo come query param)
+            // Store the search query in localStorage
             localStorage.setItem("searchQuery", searchInput);
             navigate("/reservation");
         } else {
@@ -57,7 +75,7 @@ const Home = () => {
             <div
                 className="relative flex flex-col items-center justify-around w-full gap-y-5"
                 style={{
-                    backgroundImage: "url('/parkingLot.jpg')",
+                    backgroundImage: "url('../home/parkingLot.jpg')",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                 }}
@@ -100,9 +118,15 @@ const Home = () => {
             {/* Info Section */}
             <div className="w-full flex flex-col justify-center items-center">
                 <div className="w-full md:w-[75%]">
-                    <Info isReverted={false} />
-                    <Info isReverted={true} />
-                    <Info isReverted={false} />
+                    {infoData.map((info, index) => (
+                        <Info
+                            key={index}
+                            title={info.title}
+                            isReverted={info.isReverted}
+                            text={info.text}
+                            src={info.imgSrc}
+                        />
+                    ))}
                 </div>
             </div>
 

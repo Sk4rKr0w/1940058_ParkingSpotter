@@ -30,7 +30,7 @@ const ManageSpots = () => {
                 );
                 setParkings(res.data);
 
-                // Dopo aver caricato i parkings, carico le stats per ognuno
+                // Fetch stats for each parking
 
                 const statsPromises = res.data.map((p) =>
                     axios
@@ -62,7 +62,7 @@ const ManageSpots = () => {
             return;
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:4002/parking/${id}`, {
+            await axios.delete(`http://localhost:4002/parkings/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setParkings((prev) => prev.filter((p) => p.id !== id));
@@ -260,6 +260,7 @@ const ManageSpots = () => {
                                     : p
                             )
                         );
+                        alert("Parking updated successfully.");
                         setIsModalOpen(false);
                     } catch (err) {
                         alert("Failed to update parking.");

@@ -67,7 +67,7 @@ const Signup = () => {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                    {/* Nome */}
+                    {/* Name */}
                     <div className="mb-4">
                         <input
                             type="text"
@@ -80,7 +80,7 @@ const Signup = () => {
                         />
                     </div>
 
-                    {/* Cognome */}
+                    {/* Surname */}
                     <div className="mb-4">
                         <input
                             type="text"
@@ -119,7 +119,7 @@ const Signup = () => {
                         />
                     </div>
 
-                    {/* Conferma Password */}
+                    {/* Password confirmation */}
                     <div className="mb-6">
                         <input
                             type="password"
@@ -132,7 +132,7 @@ const Signup = () => {
                         />
                     </div>
 
-                    {/* Ruolo */}
+                    {/* Role */}
                     <div className="mb-4 md:col-span-2">
                         <select
                             name="role"
@@ -145,7 +145,7 @@ const Signup = () => {
                         </select>
                     </div>
                 </div>
-                {/* Bottone */}
+                {/* Button */}
                 <button
                     type="submit"
                     disabled={loading}

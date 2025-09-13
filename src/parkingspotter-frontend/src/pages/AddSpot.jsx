@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AddSpot = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const AddSpot = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -89,9 +91,12 @@ const AddSpot = () => {
                     hourlyPrice: "",
                     type: "uncovered",
                 });
+                setTimeout(() => {
+                    navigate("/manage-spots");
+                }, 1000);
             }
         } catch (err) {
-            console.error(err);
+            console.error(err.message);
             setError("Server connection error");
         }
 

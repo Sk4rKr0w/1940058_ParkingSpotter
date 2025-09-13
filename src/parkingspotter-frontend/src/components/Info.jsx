@@ -1,4 +1,4 @@
-const Info = ({ isReverted }) => {
+const Info = ({ title, isReverted, text, src }) => {
     return (
         <div
             className={`border-1 border-gray-500/50 rounded-xl flex flex-col justify-around items-center m-4 p-4 gap-2  ${
@@ -8,7 +8,7 @@ const Info = ({ isReverted }) => {
             }`}
         >
             <img
-                src="manWithPhone.png"
+                src={src}
                 alt=""
                 className="w-40 h-40 object-cover rounded-full border-5 border-black/75"
             />
@@ -20,17 +20,14 @@ const Info = ({ isReverted }) => {
                             : "md:text-right text-orange-500"
                     }`}
                 >
-                    Titolo della Card
+                    {title}
                 </h1>
                 <p
                     className={`max-w-[55ch] text-md ${
                         isReverted ? "md:text-left" : "md:text-right"
                     }`}
                 >
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Quasi error cupiditate tenetur itaque perferendis voluptatum
-                    soluta illo saepe magni, sed enim deserunt nulla culpa
-                    ullam?
+                    {text}
                 </p>
             </div>
         </div>

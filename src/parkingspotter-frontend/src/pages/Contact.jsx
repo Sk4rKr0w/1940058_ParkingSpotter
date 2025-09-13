@@ -117,7 +117,7 @@ const Contact = () => {
                             className="block text-white/80 font-medium"
                             htmlFor="message"
                         >
-                            Message
+                            Message (max 500 characters)
                         </label>
                         <textarea
                             id="message"
@@ -125,6 +125,7 @@ const Contact = () => {
                             value={formData.message}
                             onChange={handleChange}
                             rows={5}
+                            maxLength={500}
                             placeholder="Your message..."
                             className="w-full px-4 py-3 rounded-xl bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-orange-500 transition max-h-48"
                             required
@@ -148,7 +149,7 @@ const Contact = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="md:col-span-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="cursor-pointer md:col-span-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? "Sending..." : "Send Message"}
                     </button>

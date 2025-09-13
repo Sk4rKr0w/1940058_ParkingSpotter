@@ -11,16 +11,16 @@ const PartnersSlider = () => {
 
         const list = sliderRef.current;
 
-        // Cloniamo gli elementi per avere un loop fluido
+        // Elements duplicates for infinite scroll effect
         const clone = list.innerHTML;
         list.innerHTML += clone;
 
-        // Animazione GSAP
+        // GSAP animation
         gsap.to(list, {
             x: "-100%",
             ease: "linear",
-            duration: 100, // più alto = più lento
-            repeat: -1, // loop infinito
+            duration: 100, // adjust speed here
+            repeat: -1, // infinite
         });
     }, []);
 

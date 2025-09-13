@@ -62,7 +62,7 @@ const Reservation = () => {
         }
     }, []);
 
-    // ✅ Funzione di validazione date
+    // ✅ Date Validation
     const validateDates = () => {
         const now = new Date();
         const start = new Date(startTime);
@@ -176,7 +176,7 @@ const Reservation = () => {
                 />
             </div>
 
-            {/* FORM DI PRENOTAZIONE */}
+            {/* Reservation Form */}
             {showForm && selectedParking && (
                 <div
                     ref={reservationRef}

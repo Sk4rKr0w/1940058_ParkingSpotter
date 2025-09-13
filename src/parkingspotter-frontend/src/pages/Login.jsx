@@ -16,7 +16,7 @@ const Login = () => {
         setError("");
 
         try {
-            // Qui vai a fare la chiamata al tuo backend
+            // Backend call
             const response = await fetch("http://localhost:4001/auth/login", {
                 method: "POST",
                 headers: {
@@ -80,7 +80,7 @@ const Login = () => {
                     />
                 </div>
 
-                {/* Bottone */}
+                {/* Button */}
                 <button
                     type="submit"
                     disabled={loading}

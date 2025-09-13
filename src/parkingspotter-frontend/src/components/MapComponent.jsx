@@ -61,7 +61,7 @@ export default function MapComponent({
     searchQuery: initialQuery,
     onSelectParking,
 }) {
-    const [query, setQuery] = useState(initialQuery || ""); // ✅ Stato locale
+    const [query, setQuery] = useState(initialQuery || "");
     const [visibleMarkers, setVisibleMarkers] = useState([]);
     const [mapCenter, setMapCenter] = useState({ lat: 41.8719, lng: 12.5674 });
     const [mapZoom, setMapZoom] = useState(6);
@@ -83,33 +83,38 @@ export default function MapComponent({
             setMapZoom(13);
 
             try {
-                const radius = 5;
                 const res = await fetch(
                     `http://localhost:4002/parkings/nearby?lat=${coords.lat}&lon=${coords.lng}&radius=${radius}`
                 );
 
                 if (!res.ok) {
-                    throw new Error("Errore nella chiamata API");
+                    throw new Error("Error during fetching parking data");
                 }
 
                 const data = await res.json();
                 if (data.length > 0) {
                     setVisibleMarkers(data);
                     setSearchMessage(
-                        `Trovati ${data.length} parcheggi vicino a ${searchTerm}`
+                        `Found ${data.length} parking spots near ${searchTerm}`
                     );
                 } else {
                     setVisibleMarkers([]);
                     setSearchMessage(
-                        `Nessun parcheggio trovato vicino a ${searchTerm}`
+                        `No parking spots found near ${searchTerm}.`
                     );
                 }
             } catch (err) {
                 console.error(err);
-                setSearchMessage("Errore nel caricamento dei parcheggi");
+                setSearchMessage(
+                    "Error fetching parking data. Please try again."
+                );
+                setVisibleMarkers([]);
             }
         } else {
-            setSearchMessage("Città non trovata. Prova con un nome diverso.");
+            setSearchMessage(
+                `City "${searchTerm}" not found. Please try another search.`
+            );
+            setVisibleMarkers([]);
         }
 
         setIsLoading(false);
@@ -121,7 +126,7 @@ export default function MapComponent({
         }
     };
 
-    // ✅ Se arriva una query iniziale dalla Home, fai subito la ricerca
+    // Search when initialQuery changes
     useEffect(() => {
         if (initialQuery) {
             setQuery(initialQuery);
@@ -132,7 +137,6 @@ export default function MapComponent({
     return (
         <div className="w-full max-w-6xl mx-auto p-4">
             <div className="flex flex-col md:flex-row gap-6 bg-white rounded-xl shadow-md p-4">
-                {/* Colonna sinistra */}
                 <div className="flex flex-col gap-4 md:w-1/3">
                     <div className="bg-white p-4 rounded-xl shadow-md">
                         <div className="flex flex-col gap-3 mb-3">
@@ -154,7 +158,7 @@ export default function MapComponent({
                             </button>
                         </div>
 
-                        {/* 🔹 Slider per il raggio */}
+                        {/* 🔹 Slider  */}
                         <div className="flex flex-col gap-2 mb-3">
                             <label className="font-medium text-sm">
                                 Raggio di ricerca: {radius} km
@@ -202,7 +206,7 @@ export default function MapComponent({
                     </div>
                 </div>
 
-                {/* Mappa */}
+                {/* Map */}
                 <div className="md:flex-1 h-64 md:h-auto rounded-xl overflow-hidden shadow-md relative">
                     {isLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
@@ -260,12 +264,22 @@ export default function MapComponent({
                                             {parking.hourlyPrice}€/h
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => onSelectParking(parking)}
-                                        className="cursor-pointer inline-flex items-center justify-center w-full my-2 bg-blue-500 px-4 py-2 text-white font-medium rounded-lg"
-                                    >
-                                        Prenota
-                                    </button>
+                                    {parking.totalSpots -
+                                        parking.occupiedSpots !==
+                                    0 ? (
+                                        <button
+                                            onClick={() =>
+                                                onSelectParking(parking)
+                                            }
+                                            className="cursor-pointer inline-flex items-center justify-center w-full my-2 bg-blue-500 px-4 py-2 text-white font-medium rounded-lg"
+                                        >
+                                            Book Now
+                                        </button>
+                                    ) : (
+                                        <div className="text-red-600 font-semibold mt-2">
+                                            Full
+                                        </div>
+                                    )}
                                 </Popup>
                             </Marker>
                         ))}
