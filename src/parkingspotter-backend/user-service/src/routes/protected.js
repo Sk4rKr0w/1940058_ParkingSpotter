@@ -28,9 +28,4 @@ router.get('/uniqueCode', authenticate, async (req, res) => {
   }
 });
 
-// example of role-restricted endpoint
-router.get('/admin-only', authenticate, authorize(['admin']), (req, res) => {
-  res.json({ message: 'Welcome admin!' });
-});
-
 module.exports = router;
