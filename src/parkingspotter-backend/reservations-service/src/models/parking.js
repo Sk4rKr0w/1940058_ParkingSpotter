@@ -47,6 +47,10 @@ module.exports = (sequelize) => {
     operatorId: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
   return Parking;

@@ -37,7 +37,7 @@ router.post("/", authenticate, authorize(["operator"]), async (req, res) => {
 // View all parkings for the logged-in operator
 router.get("/list", authenticate, authorize(["operator"]), async (req, res) => {
   try {
-    const parkings = await Parking.findAll({ where: { operatorId: req.user.id } });
+    const parkings = await Parking.findAll({ where: { operatorId: req.user.id, deleted: false } });
     res.json(parkings);
   } catch (err) {
     console.error(err);
@@ -51,8 +51,9 @@ router.get("/list/admin", authenticate, authorize(["admin"]), async (req, res) =
     const limit = parseInt(req.query.limit) || 10;
 
     const parkings = await Parking.findAll({
+      where: { deleted: false },
       order: [["createdAt", "DESC"]],
-      limit,
+      limit
     });
 
     res.json(parkings);
@@ -75,7 +76,7 @@ router.get("/list/admin/search", authenticate, authorize(["admin"]), async (req,
       return res.status(404).json({ error: "User not found" });
     }
 
-    const parkings = await Parking.findAll({ where: { operatorId: user.id } });
+    const parkings = await Parking.findAll({ where: { operatorId: user.id, deleted: false } });
 
     res.json({
       operator: {
@@ -112,6 +113,35 @@ router.post("/:id", authenticate, authorize(["operator", "admin"]), async (req, 
   }
 });
 
+// Delete (soft delete) parking only if owned by operator or admin
+router.delete("/:id", authenticate, authorize(["operator", "admin"]), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const parking = await Parking.findByPk(id);
+    if (!parking) return res.status(404).json({ error: "Parking not found" });
+
+    if (parking.operatorId !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ error: "You are not the owner of this parking" });
+    }
+
+    // Soft delete the parking
+    parking.deleted = true;
+    await parking.save();
+
+    // Cancel all active reservations for this parking
+    await Reservation.update(
+      { status: "cancelled" },
+      { where: { parkingId: id, status: "active" } }
+    );
+
+    res.json({ message: "Parking deleted (soft)", parking });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // View parking statistics if owned by operator or being an admin
 router.get("/:id/stats", authenticate, authorize(["operator", "admin"]), async (req, res) => {
   try {
@@ -121,6 +151,10 @@ router.get("/:id/stats", authenticate, authorize(["operator", "admin"]), async (
     if (!parking) return res.status(404).json({ error: "Parking not found" });
     if (parking.operatorId !== req.user.id && req.user.role != "admin") {
       return res.status(403).json({ error: "You are not the owner of this parking" });
+    }
+
+    if (parking.deleted) {
+      return res.status(404).json({ error: "Parking not found" });
     }
 
     const totalReservations = parking.Reservations.length;
@@ -152,7 +186,7 @@ router.get("/nearby", async (req, res) => {
       return res.status(400).json({ error: "lat and lon are required" });
     }
 
-    const parkings = await Parking.findAll();
+    const parkings = await Parking.findAll({ where: { deleted: false } });
 
     // filter by distance
     const nearby = parkings.filter((p) => {

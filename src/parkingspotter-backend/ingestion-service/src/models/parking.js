@@ -19,6 +19,14 @@ module.exports = (sequelize) => {
       type: DataTypes.FLOAT,
       allowNull: false
     },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     totalSpots: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -39,6 +47,10 @@ module.exports = (sequelize) => {
     operatorId: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
   return Parking;
