@@ -19,6 +19,7 @@ import ManageSpots from "./pages/ManageSpots";
 import AddSpot from "./pages/AddSpot";
 import Admin from "./pages/Admin";
 import Unauthorized from "./pages/Unauthorized";
+import Tickets from "./pages/Tickets";
 
 function ProtectedRoute({ children, allowedRoles }) {
     const { user, loading } = useUser();
@@ -98,6 +99,14 @@ function App() {
                         element={
                             <ProtectedRoute allowedRoles={["admin"]}>
                                 <Admin />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/tickets"
+                        element={
+                            <ProtectedRoute allowedRoles={["admin"]}>
+                                <Tickets />
                             </ProtectedRoute>
                         }
                     />
