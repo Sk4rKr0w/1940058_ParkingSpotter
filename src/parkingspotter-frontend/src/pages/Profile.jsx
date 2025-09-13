@@ -316,74 +316,101 @@ const Profile = () => {
                                     return (
                                         <li
                                             key={r.id}
-                                            className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-center gap-4"
+                                            className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col gap-4"
                                         >
-                                            <div className="w-full text-sm sm:text-base">
-                                                <p className="text-gray-700">
-                                                    <strong>
-                                                        Parking Spot:
-                                                    </strong>{" "}
-                                                    {r.Parking.name}
-                                                </p>
-                                                <p className="text-gray-700">
-                                                    <strong>Vehicle:</strong>{" "}
-                                                    {r.carPlate.toUpperCase()}
-                                                </p>
-                                                <p className="text-gray-700">
-                                                    <strong>From:</strong>{" "}
-                                                    {formatDate(r.startTime)}
-                                                </p>
-                                                <p className="text-gray-700">
-                                                    <strong>To:</strong>{" "}
-                                                    {formatDate(r.endTime)}
-                                                </p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 md:gap-y-0 md:gap-x-4 items-center">
+                                                <div className="w-full text-sm sm:text-base flex flex-col gap-1">
+                                                    <p className="text-gray-700">
+                                                        <strong>
+                                                            Parking Spot:
+                                                        </strong>{" "}
+                                                        {r.Parking.name}
+                                                    </p>
+                                                    <p className="text-gray-700">
+                                                        <strong>
+                                                            Vehicle:
+                                                        </strong>{" "}
+                                                        {r.carPlate.toUpperCase()}
+                                                    </p>
+                                                    <p className="text-gray-700">
+                                                        <strong>From:</strong>{" "}
+                                                        {formatDate(
+                                                            r.startTime
+                                                        )}
+                                                    </p>
+                                                    <p className="text-gray-700">
+                                                        <strong>To:</strong>{" "}
+                                                        {formatDate(r.endTime)}
+                                                    </p>
+                                                </div>
+                                                <hr className="w-full border-gray-400 md:hidden" />
+                                                <div className="w-full text-sm sm:text-base">
+                                                    <p className="text-gray-700">
+                                                        <strong>
+                                                            Duration:
+                                                        </strong>{" "}
+                                                        {formatDuration(
+                                                            end.getTime() -
+                                                                start.getTime()
+                                                        )}
+                                                    </p>
+                                                    <p className="text-gray-700">
+                                                        <strong>Total: </strong>
+                                                        <span>
+                                                            {r.price}
+                                                            {"€"}
+                                                        </span>
+                                                    </p>
+                                                    <p className="text-gray-700 my-1">
+                                                        <strong>Status:</strong>{" "}
+                                                        <span
+                                                            className={`font-semibold rounded-lg px-2 py-1 ${
+                                                                r.status ===
+                                                                "active"
+                                                                    ? "text-green-600 bg-green-300"
+                                                                    : r.status ===
+                                                                      "expired"
+                                                                    ? "text-yellow-600 bg-yellow-300"
+                                                                    : "text-red-600 bg-red-300"
+                                                            }`}
+                                                        >
+                                                            {r.status
+                                                                .charAt(0)
+                                                                .toUpperCase() +
+                                                                r.status.slice(
+                                                                    1
+                                                                )}
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                {r.status === "active" && (
+                                                    <div className="flex flex-col w-full col-span-2 gap-2 my-2">
+                                                        <button
+                                                            onClick={handleCancelReservation(
+                                                                r.id
+                                                            )}
+                                                            className="cursor-pointer w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
+                                                        >
+                                                            Cancel Reservation
+                                                        </button>
+
+                                                        <button
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    `https://www.google.com/maps/search/?api=1&query=${r.Parking.latitude},${r.Parking.longitude}`
+                                                                )
+                                                            }
+                                                            className={`cursor-pointer w-full flex justify-center items-center
+                                                        bg-gradient-to-r from-blue-400 to-indigo-500
+                                                        hover:from-blue-500 hover:to-indigo-600
+                                                        text-white px-4 py-2 rounded-xl text-sm font-semibold
+                                                        shadow-md transform transition-all duration-300 hover:scale-102`}
+                                                        >
+                                                            👣 Google Maps
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <hr className="w-full border-gray-400 md:hidden" />
-                                            <div className="w-full text-sm sm:text-base">
-                                                <p className="text-gray-700">
-                                                    <strong>Duration:</strong>{" "}
-                                                    {formatDuration(
-                                                        end.getTime() -
-                                                            start.getTime()
-                                                    )}
-                                                </p>
-                                                <p className="text-gray-700">
-                                                    <strong>Total: </strong>
-                                                    <span>
-                                                        {r.price}
-                                                        {"€"}
-                                                    </span>
-                                                </p>
-                                                <p className="text-gray-700 my-1">
-                                                    <strong>Status:</strong>{" "}
-                                                    <span
-                                                        className={`font-semibold rounded-lg px-2 py-1 ${
-                                                            r.status ===
-                                                            "active"
-                                                                ? "text-green-600 bg-green-300"
-                                                                : r.status ===
-                                                                  "expired"
-                                                                ? "text-yellow-600 bg-yellow-300"
-                                                                : "text-red-600 bg-red-300"
-                                                        }`}
-                                                    >
-                                                        {r.status
-                                                            .charAt(0)
-                                                            .toUpperCase() +
-                                                            r.status.slice(1)}
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            {r.status === "active" && (
-                                                <button
-                                                    onClick={handleCancelReservation(
-                                                        r.id
-                                                    )}
-                                                    className="cursor-pointer w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
-                                                >
-                                                    Cancel Reservation
-                                                </button>
-                                            )}
                                         </li>
                                     );
                                 })}
