@@ -7,12 +7,14 @@ import { useUser } from "../utils/UserContext";
 
 const Profile = () => {
     const { user } = useUser();
+    const { setUser } = useUser();
+
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [editModalOpen, setEditModalOpen] = useState(false);
 
-    // Stati per il form
+    // form states
     const [formData, setFormData] = useState({
         name: user?.name || "",
         surname: user?.surname || "",
@@ -44,7 +46,6 @@ const Profile = () => {
                     (a, b) => new Date(b.startTime) - new Date(a.startTime)
                 );
                 setReservations(sortedReservations);
-                console.log(res.data);
             } catch (err) {
                 setError("Failed to fetch reservations.");
                 console.error(err);
@@ -54,7 +55,7 @@ const Profile = () => {
         };
 
         fetchReservations();
-    }, []); // <- vuoto: solo al mount
+    }, []);
 
     useEffect(() => {
         if (containerRef.current) {
@@ -77,7 +78,6 @@ const Profile = () => {
                     }
                 );
                 setUniqueCode(res.data.uniqueCode);
-                console.log("Unique Code:", res.data.uniqueCode);
             } catch (err) {
                 console.error(err);
             }
@@ -111,7 +111,7 @@ const Profile = () => {
         }
     };
 
-    // Funzione per aggiornare il profilo
+    // Method to handle profile update
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         setFormError("");
@@ -142,13 +142,15 @@ const Profile = () => {
                 }
             );
 
-            // Aggiorna localStorage con i nuovi dati dell'utente
+            setUser(res.data.user);
+
+            // localStorage update
             localStorage.setItem("user", JSON.stringify(res.data.user));
 
             setFormSuccess("Profile updated successfully!");
             setTimeout(() => {
                 setEditModalOpen(false);
-                window.location.reload(); // per riflettere le modifiche subito
+                window.location.reload(); // Reload to reflect changes
             }, 1000);
         } catch (err) {
             setFormError("Failed to update profile.");
@@ -162,10 +164,20 @@ const Profile = () => {
         if (!uniqueCode) return;
         try {
             await navigator.clipboard.writeText(uniqueCode);
-            alert("Copied to clipboard!"); // puoi sostituire con una toast notification se vuoi
+            alert("Copied to clipboard!"); // Simple feedback
         } catch (err) {
             console.error("Failed to copy!", err);
         }
+    };
+
+    const formatDuration = (ms) => {
+        let totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        return `${hours}h ${minutes}m ${seconds}s`;
     };
 
     return (
@@ -175,10 +187,12 @@ const Profile = () => {
                     ref={containerRef}
                     className="bg-white shadow-2xl rounded-2xl p-4 sm:p-8 w-full sm:max-w-full lg:max-w-4xl"
                 >
-                    {/* HEADER UTENTE */}
+                    {/* User Header */}
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 sm:gap-6">
                         {/* Avatar */}
-                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl sm:text-4xl font-semibold shadow-lg"></div>
+                        <div className="w-24 h-24 md:w-16 md:h-16 lg:w-24 lg:h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-4xl md:text-3xl lg:text-4xl font-semibold shadow-lg">
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
 
                         {/* Info */}
                         <div className="flex flex-col gap-2 text-center md:text-left">
@@ -203,7 +217,7 @@ const Profile = () => {
                             </p>
                         </div>
 
-                        {/* Azioni */}
+                        {/* Actions */}
                         <div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4 w-full md:w-auto mt-4 md:mt-0">
                             <NavLink
                                 to="/reservation"
@@ -232,6 +246,18 @@ const Profile = () => {
                             >
                                 Edit Profile
                             </button>
+
+                            <NavLink
+                                to="/admin"
+                                className={`w-full flex justify-center items-center
+                bg-gradient-to-r from-green-400 to-green-500
+                hover:from-green-500 hover:to-green-600
+                text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-sm font-semibold
+                shadow-md transform transition-all duration-300 hover:scale-105
+                ${user.role === "admin" ? "md:col-span-2" : "hidden"}`}
+                            >
+                                Admin Dashboard
+                            </NavLink>
 
                             {user.role === "operator" && (
                                 <div className="w-full flex flex-col md:col-span-2 justify-center p-3 sm:p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition-all hover:shadow-lg">
@@ -266,7 +292,7 @@ const Profile = () => {
                     {/* Divider */}
                     <div className="border-t border-gray-200 my-6" />
 
-                    {/* Sezione prenotazioni */}
+                    {/* Reservations Section */}
                     <div>
                         <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
                             Your Reservations
@@ -283,59 +309,84 @@ const Profile = () => {
                             </p>
                         ) : (
                             <ul className="space-y-4">
-                                {reservations.map((r) => (
-                                    <li
-                                        key={r.id}
-                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-center gap-4"
-                                    >
-                                        <div className="w-full text-sm sm:text-base">
-                                            <p className="text-gray-700">
-                                                <strong>Parking Spot:</strong>{" "}
-                                                {r.Parking.name}
-                                            </p>
-                                            <p className="text-gray-700">
-                                                <strong>Vehicle:</strong>{" "}
-                                                {r.carPlate.toUpperCase()}
-                                            </p>
-                                            <p className="text-gray-700">
-                                                <strong>From:</strong>{" "}
-                                                {formatDate(r.startTime)}
-                                            </p>
-                                            <p className="text-gray-700">
-                                                <strong>To:</strong>{" "}
-                                                {formatDate(r.endTime)}
-                                            </p>
-                                            <p className="text-gray-700">
-                                                <strong>Status:</strong>{" "}
-                                                <span
-                                                    className={`font-semibold ${
-                                                        r.status === "active"
-                                                            ? "text-green-600"
-                                                            : r.status ===
-                                                              "expired"
-                                                            ? "text-yellow-600"
-                                                            : "text-red-600"
-                                                    }`}
+                                {reservations.map((r) => {
+                                    const start = new Date(r.startTime);
+                                    const end = new Date(r.endTime);
+
+                                    return (
+                                        <li
+                                            key={r.id}
+                                            className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-center gap-4"
+                                        >
+                                            <div className="w-full text-sm sm:text-base">
+                                                <p className="text-gray-700">
+                                                    <strong>
+                                                        Parking Spot:
+                                                    </strong>{" "}
+                                                    {r.Parking.name}
+                                                </p>
+                                                <p className="text-gray-700">
+                                                    <strong>Vehicle:</strong>{" "}
+                                                    {r.carPlate.toUpperCase()}
+                                                </p>
+                                                <p className="text-gray-700">
+                                                    <strong>From:</strong>{" "}
+                                                    {formatDate(r.startTime)}
+                                                </p>
+                                                <p className="text-gray-700">
+                                                    <strong>To:</strong>{" "}
+                                                    {formatDate(r.endTime)}
+                                                </p>
+                                            </div>
+                                            <hr className="w-full border-gray-400 md:hidden" />
+                                            <div className="w-full text-sm sm:text-base">
+                                                <p className="text-gray-700">
+                                                    <strong>Duration:</strong>{" "}
+                                                    {formatDuration(
+                                                        end.getTime() -
+                                                            start.getTime()
+                                                    )}
+                                                </p>
+                                                <p className="text-gray-700">
+                                                    <strong>Total: </strong>
+                                                    <span>
+                                                        {r.price}
+                                                        {"€"}
+                                                    </span>
+                                                </p>
+                                                <p className="text-gray-700 my-1">
+                                                    <strong>Status:</strong>{" "}
+                                                    <span
+                                                        className={`font-semibold rounded-lg px-2 py-1 ${
+                                                            r.status ===
+                                                            "active"
+                                                                ? "text-green-600 bg-green-300"
+                                                                : r.status ===
+                                                                  "expired"
+                                                                ? "text-yellow-600 bg-yellow-300"
+                                                                : "text-red-600 bg-red-300"
+                                                        }`}
+                                                    >
+                                                        {r.status
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                            r.status.slice(1)}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            {r.status === "active" && (
+                                                <button
+                                                    onClick={handleCancelReservation(
+                                                        r.id
+                                                    )}
+                                                    className="cursor-pointer w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
                                                 >
-                                                    {r.status
-                                                        .charAt(0)
-                                                        .toUpperCase() +
-                                                        r.status.slice(1)}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        {r.status === "active" && (
-                                            <button
-                                                onClick={handleCancelReservation(
-                                                    r.id
-                                                )}
-                                                className="cursor-pointer w-full md:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition"
-                                            >
-                                                Cancel Reservation
-                                            </button>
-                                        )}
-                                    </li>
-                                ))}
+                                                    Cancel Reservation
+                                                </button>
+                                            )}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         )}
                     </div>
@@ -346,7 +397,7 @@ const Profile = () => {
                 </p>
             )}
 
-            {/* Modale */}
+            {/* Modal*/}
             {editModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-lg max-h-[90vh] overflow-y-auto">
