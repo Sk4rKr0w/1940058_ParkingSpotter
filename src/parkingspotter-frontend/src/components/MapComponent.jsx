@@ -279,7 +279,7 @@ export default function MapComponent({
                                             Book Now
                                         </button>
                                     ) : (
-                                        <div className="text-red-600 font-semibold mt-2">
+                                        <div className="inline-flex items-center justify-center w-full my-2 bg-red-500 px-4 py-2 text-white font-medium rounded-lg">
                                             Full
                                         </div>
                                     )}
