@@ -76,8 +76,9 @@ const EditSpotModal = ({ isOpen, onClose, parking, onSave }) => {
                                 Select Parking Type
                             </option>
                             <option value="uncovered">Uncovered</option>
+                            <option value="covered">Covered</option>{" "}
+                            <option value="underground">Underground</option>
                             <option value="multi-storey">Multi-storey</option>
-                            <option value="covered">Covered</option>
                         </select>
                     </div>
 

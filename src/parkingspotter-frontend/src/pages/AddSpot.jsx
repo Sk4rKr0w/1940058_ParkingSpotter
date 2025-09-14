@@ -107,7 +107,7 @@ const AddSpot = () => {
         <div className="flex justify-center items-center min-h-screen bg-gray-900">
             <form
                 onSubmit={handleSubmit}
-                className="bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-md mx-2"
+                className="bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-md mx-2 my-10"
             >
                 <h2 className="text-3xl font-bold text-orange-500 mb-6 text-center">
                     Add Parking Spot
@@ -124,96 +124,99 @@ const AddSpot = () => {
                     </p>
                 )}
 
-                {/* Parking Name */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Parking Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                <div className="flex flex-col md:grid grid-cols-2 gap-2">
+                    {/* Parking Name */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Parking Name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* City */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="city"
-                        placeholder="City"
-                        value={formData.city}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* City */}
+                    <div className="mb-4">
+                        <input
+                            type="text"
+                            name="city"
+                            placeholder="City"
+                            value={formData.city}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Street */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="street"
-                        placeholder="Street (e.g., 10 Roma St)"
-                        value={formData.street}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Street */}
+                    <div className="mb-4 md:col-span-2">
+                        <input
+                            type="text"
+                            name="street"
+                            placeholder="Street (e.g., 10 Roma St)"
+                            value={formData.street}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Total Spots */}
-                <div className="mb-4">
-                    <input
-                        type="number"
-                        name="totalSpots"
-                        placeholder="Total Spots"
-                        value={formData.totalSpots}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Total Spots */}
+                    <div className="mb-4">
+                        <input
+                            type="number"
+                            name="totalSpots"
+                            placeholder="Total Spots"
+                            value={formData.totalSpots}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Hourly Price */}
-                <div className="mb-4">
-                    <input
-                        type="number"
-                        step="0.01"
-                        name="hourlyPrice"
-                        placeholder="Hourly Price (€)"
-                        value={formData.hourlyPrice}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                </div>
+                    {/* Hourly Price */}
+                    <div className="mb-4">
+                        <input
+                            type="number"
+                            step="0.01"
+                            name="hourlyPrice"
+                            placeholder="Hourly Price (€)"
+                            value={formData.hourlyPrice}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
 
-                {/* Type (uncovered, covered, multi-storey) */}
-                <div className="mb-6">
-                    <select
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    {/* Type (uncovered, covered, underground, multi-storey) */}
+                    <div className="mb-6 md:col-span-2">
+                        <select
+                            name="type"
+                            value={formData.type}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        >
+                            <option value="uncovered">Uncovered</option>
+                            <option value="covered">Covered</option>
+                            <option value="underground">Underground</option>
+                            <option value="multi-storey">Multi-storey</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className={`cursor-pointer md:col-span-2 w-full py-3 rounded-lg font-semibold text-white transition duration-300 ${
+                            loading
+                                ? "bg-orange-400 cursor-not-allowed"
+                                : "bg-orange-600 hover:bg-orange-700"
+                        }`}
                     >
-                        <option value="uncovered">Uncovered</option>
-                        <option value="covered">Covered</option>
-                        <option value="multi-storey">Multi-storey</option>
-                    </select>
+                        {loading ? "Adding..." : "Add Parking Spot"}
+                    </button>
                 </div>
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className={`cursor-pointer w-full py-3 rounded-lg font-semibold text-white transition duration-300 ${
-                        loading
-                            ? "bg-orange-400 cursor-not-allowed"
-                            : "bg-orange-600 hover:bg-orange-700"
-                    }`}
-                >
-                    {loading ? "Adding..." : "Add Parking Spot"}
-                </button>
             </form>
         </div>
     );

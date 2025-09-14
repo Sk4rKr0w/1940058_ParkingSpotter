@@ -69,19 +69,17 @@ const Reservation = () => {
         const end = new Date(endTime);
 
         if (!startTime || !endTime) {
-            setValidationError("Seleziona entrambe le date.");
+            setValidationError("You must select both start and end dates.");
             return false;
         }
 
         if (start < now) {
-            setValidationError("La data di inizio non può essere nel passato.");
+            setValidationError("You cannot select a start date in the past.");
             return false;
         }
 
         if (end <= start) {
-            setValidationError(
-                "La data di fine deve essere successiva alla data di inizio."
-            );
+            setValidationError("End date must be after the start date.");
             return false;
         }
 
@@ -95,17 +93,17 @@ const Reservation = () => {
 
     const handleBooking = async () => {
         if (!carPlate || !startTime || !endTime) {
-            setBookingMessage("Compila tutti i campi.");
+            setBookingMessage("Please fill in all fields.");
             return;
         }
 
         if (!validateDates()) {
-            setBookingMessage("Correggi le date prima di continuare.");
+            setBookingMessage("Please correct the date errors above.");
             return;
         }
 
         if (!selectedParking?.id) {
-            setBookingMessage("Seleziona un parcheggio valido.");
+            setBookingMessage("No parking selected.");
             return;
         }
 
@@ -130,20 +128,22 @@ const Reservation = () => {
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || "Errore nella prenotazione");
+                throw new Error(
+                    errData.error || "Booking failed. Please try again."
+                );
             }
 
             const data = await response.json();
             console.log("Booking response:", data);
 
-            setBookingMessage("Prenotazione completata con successo!");
+            setBookingMessage("Booking successful!");
             setShowForm(false);
-            alert("Prenotazione effettuata con successo!");
+            alert("Booking successful!");
             navigate("/profile");
         } catch (error) {
             console.error(error);
             setBookingMessage(
-                error.message || "Errore durante la prenotazione. Riprova."
+                error.message || "Booking failed. Please try again."
             );
         } finally {
             setIsBooking(false);
@@ -183,24 +183,37 @@ const Reservation = () => {
                     className="bg-white/90 rounded-xl shadow-xl p-6 mt-8 max-w-xl mx-auto w-full flex flex-col gap-4"
                 >
                     <h2 className="text-2xl font-bold text-gray-800 text-center">
-                        Prenotazione
+                        Reservation Details
                     </h2>
                     <div className="bg-gray-300/50 p-2 rounded-lg flex flex-col gap-1">
                         <p className="text-gray-700 text-sm">
-                            Parcheggio: <strong>{selectedParking.name}</strong>
+                            Parking Spot:{" "}
+                            <strong>{selectedParking.name}</strong>
                         </p>
                         <p className="text-gray-700 text-sm">
-                            Tariffa:{" "}
+                            Hourly Price:{" "}
                             <span className="font-semibold">
                                 {selectedParking.hourlyPrice}€/h
                             </span>
                         </p>
                     </div>
 
+                    {validationError && (
+                        <p className="text-center text-sm text-red-500">
+                            {validationError}
+                        </p>
+                    )}
+
+                    {bookingMessage && (
+                        <p className="text-center text-sm text-gray-600">
+                            {bookingMessage}
+                        </p>
+                    )}
+
                     <div className="flex flex-col gap-3">
                         <input
                             type="text"
-                            placeholder="Targa auto"
+                            placeholder="Car Plate (e.g., AB123CD)"
                             value={carPlate}
                             onChange={(e) => setCarPlate(e.target.value)}
                             className="bg-white border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -226,17 +239,18 @@ const Reservation = () => {
                             }`}
                         />
 
-                        {validationError && (
-                            <p className="text-center text-sm text-red-500">
-                                {validationError}
-                            </p>
-                        )}
-
-                        {bookingMessage && (
-                            <p className="text-center text-sm text-gray-600">
-                                {bookingMessage}
-                            </p>
-                        )}
+                        <span className="text-gray-800 font-medium text-left px-4 py-2 bg-gray-300 rounded-lg">
+                            Final Price:{" "}
+                            {startTime && endTime
+                                ? (
+                                      ((new Date(endTime) -
+                                          new Date(startTime)) /
+                                          36e5) *
+                                      selectedParking.hourlyPrice
+                                  ).toFixed(2)
+                                : 0}
+                            €
+                        </span>
 
                         <div className="flex gap-3 mt-2">
                             <button
@@ -248,13 +262,13 @@ const Reservation = () => {
                                         : "bg-orange-500 hover:bg-orange-600"
                                 }`}
                             >
-                                {isBooking ? "Prenotando..." : "Conferma"}
+                                {isBooking ? "Booking..." : "Book Now!"}
                             </button>
                             <button
                                 onClick={() => setShowForm(false)}
                                 className="cursor-pointer flex-1 rounded-lg py-2 bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition"
                             >
-                                Annulla
+                                Cancel
                             </button>
                         </div>
                     </div>

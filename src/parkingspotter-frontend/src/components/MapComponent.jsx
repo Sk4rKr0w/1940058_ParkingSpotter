@@ -145,7 +145,7 @@ export default function MapComponent({
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                placeholder="Cerca una città (es: Roma, Milano...)"
+                                placeholder="Enter city name (e.g., Rome)"
                                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                                 disabled={isLoading}
                             />
@@ -154,14 +154,14 @@ export default function MapComponent({
                                 disabled={isLoading}
                                 className="cursor-pointer px-5 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
                             >
-                                {isLoading ? "Cercando..." : "Cerca"}
+                                {isLoading ? "Searching..." : "Search"}
                             </button>
                         </div>
 
                         {/* 🔹 Slider  */}
                         <div className="flex flex-col gap-2 mb-3">
                             <label className="font-medium text-sm">
-                                Raggio di ricerca: {radius} km
+                                Search Radius: {radius} km
                             </label>
                             <input
                                 type="range"
@@ -184,13 +184,16 @@ export default function MapComponent({
 
                     {/* Legenda */}
                     <div className="bg-gray-50 p-4 rounded-xl shadow-inner border-b-1 border-b-gray-300 ">
-                        <h4 className="font-semibold mb-3">Legenda:</h4>
+                        <h4 className="font-semibold mb-3">Legend:</h4>
                         <div className="flex flex-wrap gap-4 text-sm">
                             {[
-                                { color: "bg-blue-500", label: "Interrato" },
-                                { color: "bg-orange-500", label: "Coperto" },
-                                { color: "bg-green-600", label: "Multipiano" },
-                                { color: "bg-red-600", label: "Scoperto" },
+                                { color: "bg-blue-500", label: "Underground" },
+                                { color: "bg-orange-500", label: "Covered" },
+                                {
+                                    color: "bg-green-600",
+                                    label: "Multi-storey",
+                                },
+                                { color: "bg-red-600", label: "Uncovered" },
                             ].map((item) => (
                                 <div
                                     key={item.label}
@@ -245,22 +248,22 @@ export default function MapComponent({
                                     <div className="text-sm space-y-1">
                                         <strong>{parking.name}</strong>
                                         <div className="text-blue-600">
-                                            🏙 Tipo:{" "}
+                                            🏙 Type:{" "}
                                             {parking.type
                                                 .charAt(0)
                                                 .toUpperCase() +
                                                 parking.type.slice(1) || "N/D"}
                                         </div>
                                         <div className="text-green-600">
-                                            📅 Posti: {parking.totalSpots}
+                                            📅 Spots: {parking.totalSpots}
                                         </div>
                                         <div className="text-orange-600">
-                                            ✔ Posti Liberi:{" "}
+                                            ✔ Free Spots:{" "}
                                             {parking.totalSpots -
                                                 parking.occupiedSpots}
                                         </div>
                                         <div className="text-red-600">
-                                            💲 Tariffa Oraria:{" "}
+                                            💲 Hourly Price:{" "}
                                             {parking.hourlyPrice}€/h
                                         </div>
                                     </div>
