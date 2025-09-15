@@ -1,7 +1,40 @@
 # SYSTEM DESCRIPTION:
 
-<description of the system>
+The proposed system consists of a network of smart sensors deployed across parking areas in a city. Each sensor detects whether a parking area has vacant spaces and the collected data is aggregated in real-time and shared with users via a web interface optimized for mobile-use. For the realization of the project it is planned to create simulated sensors that send data to the system.
 
 # USER STORIES:
 
-<list of user stories>
+1. As a driver, I want to sign up, so that I can use the site.
+2. As a driver, I want to sign in, so that I can use the site.
+3. As a driver, I want to logout, so that no one else use my account
+4. As a driver, I want to see available parking spaces on an interactive map, so that I can quickly find a spot near my destination.
+5. As a driver, I want to reserve a specific parking space, so that I can be sure it will be available when I arrive.
+6. As a driver, I want to cancel my active reservation, so that the space is released for others to use.
+7. As a driver, I want to navigate to my reserved parking space by using Google Maps link, so that I can easily reach it.
+8. As a driver, I want to view my parking history, so that I can track my usage and expenses.
+9. As a driver, I want to see the total price of a parking session, so that I know how much I will be charged.
+10. As a driver, I want to create support tickets, so that I can get help in case of a problem.
+11. As a driver, I want to edit my personal profile, so that my information is always up to date.
+12. As a parking operator, I want to view real-time availability and occupancy of my lots, so that I can manage operations effectively.
+13. As a parking operator, I want to sign up, so that I can use the site.
+14. As a parking operator, I want to sign in, so that I can use the site.
+15. As a parking operator, I want to logout, so that no one else use my account
+16. As a parking operator, I want to add a new parking lot to the system, so that I can expand my managed fleet.
+17. As a parking operator, I want to search and filter my parkings by name, so that I can quickly find a specific lot in my dashboard.
+18. As a parking operator, I want to adjust the hourly pricing for my parking lots, so that I can implement dynamic pricing strategies.
+19. As a parking operator, I want to update parking details like address, so that the information is always accurate for drivers.
+20. As a parking operator, I want to remove a parking lot from the system, so that I can decommission outdated facilities.
+21. As a parking operator, I want to modify the number of available spots in a lot, so that I can reflect maintenance work or capacity changes.
+22. As a parking operator, I want to access a driver account view, so that I can also reserve parking spots when needed.
+23. As a parking operator, I want to view my unique code, so that I can link my physical sensors to the platform for real-time data transmission.
+24. As an admin, I want to sign in, so that I can use the site.
+25. As an admin, I want to logout, so that no one else uses my account.
+26. As an admin, I want to see all support tickets received from drivers and operators, so that I can provide timely assistance.
+27. As an admin, I want to view dashboard metrics for opened tickets (total and daily), so that I can monitor them.
+28. As an admin, I want to see lists of newly registered drivers and parking lots, so that I can track platform growth.
+29. As an admin, I want to obtain parkings lists by operator email, so that I can efficiently address related issues.
+30. As an admin, I want to edit any parking lot's details, so that I can correct errors or update information.
+31. As an admin, I want to delete any parking lot from the system, so that I can manage inappropriate or decommissioned listings.
+32. As the system, I want to simulate sensor data, so that I can test the platform without physical sensors.
+33. As the system, I want to synchronize reservation status with sensor data, so that parking availability is always accurate.
+34. As the system, I want to authenticate operators with secure unique codes, so that platform access is controlled and secure.
