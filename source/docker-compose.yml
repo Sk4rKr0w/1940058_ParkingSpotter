@@ -1,0 +1,141 @@
+services:
+  user-service:
+    build: ./src/parkingspotter-backend/user-service
+    env_file: ./src/parkingspotter-backend/user-service/.env
+    ports:
+      - "4001:4001"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  reservations-service:
+    build: ./src/parkingspotter-backend/reservations-service
+    env_file: ./src/parkingspotter-backend/reservations-service/.env
+    ports:
+      - "4002:4002"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  tickets-service:
+    build: ./src/parkingspotter-backend/tickets-service
+    env_file: ./src/parkingspotter-backend/tickets-service/.env
+    ports:
+      - "4003:4003"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  ingestion-service:
+    build: ./src/parkingspotter-backend/ingestion-service
+    env_file: ./src/parkingspotter-backend/ingestion-service/.env
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - usp-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    env_file: ./src/parkingspotter-backend/ingestion-service/.env
+    ports:
+      - "5675:5672"
+      - "15675:15672"
+    restart: always
+    networks:
+      - usp-net
+
+  postgres:
+    image: postgres:17
+    env_file: ./src/parkingspotter-backend/user-service/.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - usp-net
+
+  frontend:
+    build: ./src/parkingspotter-frontend
+    volumes:
+      - ./src/parkingspotter-frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    restart: always
+    networks:
+      - usp-net
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: ["npm", "run", "dev"]
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - usp-net
+
+  sensor-simulator-centrostorico:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=1
+      - PARKING_MAX_PLACES=30
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
+  sensor-simulator-termini:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=2
+      - PARKING_MAX_PLACES=200
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
+  sensor-simulator-eur:
+    build: ./src/parkingspotter-backend/sensorsimulator-service
+    env_file: ./src/parkingspotter-backend/sensorsimulator-service/.env
+    environment:
+      - PARKING_ID=3
+      - PARKING_MAX_PLACES=150
+    depends_on:
+      - rabbitmq
+    networks:
+      - usp-net
+
+volumes:
+  pgdata:
+  pgadmin_data:
+
+networks:
+  usp-net:

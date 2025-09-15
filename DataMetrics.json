@@ -1,0 +1,37 @@
+[
+    {
+        "set_id": 1,
+        "set_name": "Authentication & Profile",
+        "user_stories": [1,2,3,11,13,14,15,23,24,25,28],
+        "links": [2,3,4],
+        "db": true
+    },
+    {
+        "set_id": 2,
+        "set_name": "Parking & Reservations",
+        "user_stories": [4,5,6,8,9,12,16,17,18,19,20,21,28,29,30,31],
+        "links": [1,4],
+        "db": true
+    },
+    {
+        "set_id": 3,
+        "set_name": "Tickets & Support",
+        "user_stories": [10,26,27],
+        "links": [1],
+        "db": true
+    },
+    {
+        "set_id": 4,
+        "set_name": "Sensor Ingestion",
+        "user_stories": [33,34],
+        "links": [1,2],
+        "db": true
+    },
+    {
+        "set_id": 5,
+        "set_name": "Sensor Simulation",
+        "user_stories": [32],
+        "links": [4],
+        "db": false
+    }
+]
